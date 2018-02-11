@@ -1,0 +1,18 @@
+language: python
+
+matrix:
+    include:
+        - python: 3.5
+          env: TOXENV=py35
+        - python: 3.6
+          env: TOXENV=py36
+        - python: pypy3
+          env: TOXENV=pypy3
+
+install:
+  - pip install tox codecov
+
+script: tox
+
+after_success:
+  - codecov
