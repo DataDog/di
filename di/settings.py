@@ -11,8 +11,8 @@ from di.utils import create_file, ensure_dir_exists
 SETTINGS_FILE = os.path.join(user_data_dir('di-test', ''), 'settings.toml')
 
 DEFAULT_SETTINGS = OrderedDict([
-    ('agent5', 'master'),
-    ('agent6', 'master'),
+    ('agent5', 'datadog/dev-dd-agent:master'),
+    ('agent6', 'datadog/agent:latest'),
     ('api_key', '$DD_API_KEY'),
     ('core', os.path.expanduser(os.path.join('~', 'integrations-core'))),
     ('extras', os.path.expanduser(os.path.join('~', 'integrations-extras'))),
