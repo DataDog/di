@@ -45,9 +45,9 @@ If you'd like to use the master branch instead, do:
 
 You **must** have `Docker <https://docs.docker.com/install>`_ installed.
 
-*Note: If you're using the older `Docker Toolbox <https://docs.docker.com/toolbox/overview>`_
+*Note:* If you're using the older `Docker Toolbox <https://docs.docker.com/toolbox/overview>`_
 and are on Windows, you may need to run the command shown when you do ``docker-machine env``.
-The command will likely be ``@FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i``.*
+The command will likely be ``@FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i``.
 
 License
 -------
