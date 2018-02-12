@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from di.agent import A6_CONF_PATH
+from di.agent import A6_CONF_DIR
 from di.utils import NEED_SUBPROCESS_SHELL
 
 
@@ -12,7 +12,7 @@ def get_agent_version(image):
     ], shell=NEED_SUBPROCESS_SHELL).decode().strip().split()[-1]
 
     if not version[0].isdigit():
-        if dir_exists(os.path.join(A6_CONF_PATH, 'disk'), image):
+        if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image):
             version = '6'
         else:
             version = '5'
