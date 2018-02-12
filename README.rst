@@ -37,6 +37,18 @@ Python 3.5+ and PyPy.
 
     $ pip install di
 
+If you'd like to use the master branch instead, do:
+
+.. code-block:: bash
+
+    $ pip install https://github.com/DataDog/di/archive/master.tar.gz
+
+You **must** have `Docker <https://docs.docker.com/install>`_ installed.
+
+*Note: If you're using the older `Docker Toolbox <https://docs.docker.com/toolbox/overview>`_
+and are on Windows, you may need to run the command shown when you do ``docker-machine env``.
+The command will likely be ``@FOR /f "tokens=*" %i IN ('docker-machine env') DO @%i``.*
+
 License
 -------
 
