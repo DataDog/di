@@ -8,11 +8,20 @@ from urllib.request import urlopen
 
 from appdirs import user_data_dir
 
+from di.agent import A5_CONF_DIR, A6_CONF_DIR
+
 APP_DIR = user_data_dir('di-dev', '')
 
 __platform = platform.system()
 ON_MACOS = os.name == 'mac' or __platform == 'Darwin'
 ON_WINDOWS = NEED_SUBPROCESS_SHELL = os.name == 'nt' or __platform == 'Windows'
+
+
+def get_conf_glob(check, agent_version_major):
+    if int(agent_version_major) >= 6:
+        return '{conf_dir}/{check}.d/conf*'.format(conf_dir=A6_CONF_DIR, check=check)
+    else:
+        return '{conf_dir}/{check}*'.format(conf_dir=A5_CONF_DIR, check=check)
 
 
 def ensure_dir_exists(d):
