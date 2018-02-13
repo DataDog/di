@@ -16,8 +16,12 @@ def ensure_dir_exists(d):
         os.makedirs(d)
 
 
+def ensure_parent_dir_exists(path):
+    ensure_dir_exists(os.path.dirname(os.path.abspath(path)))
+
+
 def create_file(fname):
-    ensure_dir_exists(os.path.dirname(os.path.abspath(fname)))
+    ensure_parent_dir_exists(fname)
     with open(fname, 'a'):
         os.utime(fname, times=None)
 
