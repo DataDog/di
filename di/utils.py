@@ -43,8 +43,6 @@ def get_conf_example_glob(check, agent_version_major):
 def string_to_toml_type(s):
     if s.isdigit():
         s = int(s)
-    elif s.isdecimal():
-        s = float(s)
     elif s == 'true':
         s = True
     elif s == 'false':
