@@ -39,3 +39,12 @@ def read_file(path, image):
     ], shell=NEED_SUBPROCESS_SHELL).decode()
 
     return output
+
+
+def read_matching_glob(glob, image):
+    output = subprocess.check_output([
+        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
+        "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
+    ], shell=NEED_SUBPROCESS_SHELL).decode()
+
+    return output
