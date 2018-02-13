@@ -10,11 +10,16 @@ from di.utils import APP_DIR, create_file, ensure_dir_exists
 SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 
 DEFAULT_SETTINGS = OrderedDict([
-    ('agent5', 'datadog/dev-dd-agent:master'),
+    ('mode', 'prod'),
+    ('agent', 6),
     ('agent6', 'datadog/agent:latest'),
+    ('agent5', 'datadog/dev-dd-agent:master'),
     ('api_key', '$DD_API_KEY'),
-    ('core', os.path.expanduser(os.path.join('~', 'integrations-core'))),
-    ('extras', os.path.expanduser(os.path.join('~', 'integrations-extras'))),
+    ('core', os.path.expanduser(os.path.join('~', 'dd', 'integrations-core'))),
+    ('extras', os.path.expanduser(os.path.join('~', 'dd', 'integrations-extras'))),
+    ('dev', OrderedDict([
+        ('copy_conf', True),
+    ])),
 ])
 
 
