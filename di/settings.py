@@ -8,7 +8,7 @@ from atomicwrites import atomic_write
 
 from di.utils import create_file, ensure_dir_exists
 
-SETTINGS_FILE = os.path.join(user_data_dir('di-test', ''), 'settings.toml')
+SETTINGS_FILE = os.path.join(user_data_dir('di-dev', ''), 'settings.toml')
 
 DEFAULT_SETTINGS = OrderedDict([
     ('agent5', 'datadog/dev-dd-agent:master'),
