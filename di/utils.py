@@ -17,6 +17,14 @@ ON_MACOS = os.name == 'mac' or __platform == 'Darwin'
 ON_WINDOWS = NEED_SUBPROCESS_SHELL = os.name == 'nt' or __platform == 'Windows'
 
 
+def get_check_mount_dir():
+    return '/home'
+
+
+def get_check_dir(check):
+    return '{}/{}'.format(get_check_mount_dir(), check)
+
+
 def get_conf_path(check, agent_version_major):
     if int(agent_version_major) >= 6:
         return '{conf_dir}/{check}.d/{check}.yaml'.format(conf_dir=A6_CONF_DIR, check=check)
