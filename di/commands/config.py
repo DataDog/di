@@ -7,6 +7,7 @@ from di.settings import (
     SETTINGS_FILE, copy_default_settings, load_settings, restore_settings,
     save_settings
 )
+from di.utils import string_to_toml_type
 
 
 @click.group(context_settings=CONTEXT_SETTINGS, invoke_without_command=True,
@@ -71,28 +72,10 @@ def set_value(key, value):
         new_settings = new_settings[key]
         key = value
         value = data.pop()
-    new_settings[key] = value
+    new_settings[key] = string_to_toml_type(value)
 
     user_settings.update(updated_settings)
     save_settings(user_settings)
 
     echo_success('New setting:')
     echo_info(toml.dumps(updated_settings))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

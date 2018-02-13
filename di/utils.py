@@ -1,6 +1,7 @@
 import os
 import platform
 import shutil
+from ast import literal_eval
 from contextlib import contextmanager
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -37,6 +38,21 @@ def get_conf_example_glob(check, agent_version_major):
         return '{conf_dir}/{check}.d/conf*'.format(conf_dir=A6_CONF_DIR, check=check)
     else:
         return '{conf_dir}/{check}*'.format(conf_dir=A5_CONF_DIR, check=check)
+
+
+def string_to_toml_type(s):
+    if s.isdigit():
+        s = int(s)
+    elif s.isdecimal():
+        s = float(s)
+    elif s == 'true':
+        s = True
+    elif s == 'false':
+        s = False
+    elif s.startswith('['):
+        s = literal_eval(s)
+
+    return s
 
 
 def ensure_dir_exists(d):
