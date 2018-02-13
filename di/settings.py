@@ -3,12 +3,11 @@ from collections import OrderedDict
 from copy import deepcopy
 
 import toml
-from appdirs import user_data_dir
 from atomicwrites import atomic_write
 
-from di.utils import create_file, ensure_dir_exists
+from di.utils import APP_DIR, create_file, ensure_dir_exists
 
-SETTINGS_FILE = os.path.join(user_data_dir('di-dev', ''), 'settings.toml')
+SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 
 DEFAULT_SETTINGS = OrderedDict([
     ('agent5', 'datadog/dev-dd-agent:master'),
