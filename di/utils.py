@@ -27,7 +27,7 @@ def get_check_dir(check):
     return '{}/{}'.format(get_check_mount_dir(), check)
 
 
-def get_exe_path(agent_version_major):
+def get_agent_exe_path(agent_version_major):
     if int(agent_version_major) >= 6:
         return A6_EXE_PATH
     else:
