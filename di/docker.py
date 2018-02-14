@@ -32,9 +32,9 @@ def get_agent_version(image_or_container, running=False):
     if running:
         version = subprocess.check_output([
             'docker', 'exec', image_or_container, 'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], shell=NEED_SUBPROCESS_SHELL).decode().strip().split()[-1]
+        ], shell=NEED_SUBPROCESS_SHELL).decode().strip().split()[-1][0]
 
-        if not version[0].isdigit():
+        if not version.isdigit():
             if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container):
                 version = '6'
             else:
@@ -43,9 +43,9 @@ def get_agent_version(image_or_container, running=False):
         version = subprocess.check_output([
             'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
             'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], shell=NEED_SUBPROCESS_SHELL).decode().strip().split()[-1]
+        ], shell=NEED_SUBPROCESS_SHELL).decode().strip().split()[-1][0]
 
-        if not version[0].isdigit():
+        if not version.isdigit():
             if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container):
                 version = '6'
             else:
