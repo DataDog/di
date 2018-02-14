@@ -10,7 +10,7 @@ from urllib.request import urlopen
 
 from appdirs import user_data_dir
 
-from di.agent import A5_CONF_DIR, A6_CONF_DIR
+from di.agent import A5_CONF_DIR, A5_EXE_PATH, A6_CONF_DIR, A6_EXE_PATH
 
 APP_DIR = user_data_dir('di-dev', '')
 
@@ -25,6 +25,13 @@ def get_check_mount_dir():
 
 def get_check_dir(check):
     return '{}/{}'.format(get_check_mount_dir(), check)
+
+
+def get_exe_path(agent_version_major):
+    if int(agent_version_major) >= 6:
+        return A6_EXE_PATH
+    else:
+        return A5_EXE_PATH
 
 
 def get_conf_path(check, agent_version_major):
