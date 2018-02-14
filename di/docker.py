@@ -85,3 +85,11 @@ def read_matching_glob(glob, image):
     ], shell=NEED_SUBPROCESS_SHELL).decode()
 
     return output
+
+
+def container_running(container):
+    output = subprocess.check_output([
+        'docker', 'ps', '-f', 'name={container}'.format(container=container)
+    ], shell=NEED_SUBPROCESS_SHELL).decode().strip()
+
+    return len(output.splitlines()) > 1
