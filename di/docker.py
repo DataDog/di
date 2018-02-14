@@ -2,10 +2,18 @@ import os
 import subprocess
 
 from di.agent import A6_CONF_DIR
-from di.utils import NEED_SUBPROCESS_SHELL
+from di.utils import NEED_SUBPROCESS_SHELL, get_check_dir
 
 # Must be a certain length
 __API_KEY = 'a' * 32
+
+
+def pip_install_mounted_check(container, check):
+    output = subprocess.check_output([
+        'docker', 'exec', container, 'pip', 'install', '-e', get_check_dir(check)
+    ], shell=NEED_SUBPROCESS_SHELL).decode().strip()
+
+    return output
 
 
 def get_agent_version(image):
