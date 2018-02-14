@@ -3,6 +3,7 @@ import platform
 import shutil
 from ast import literal_eval
 from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.request import urlopen
@@ -38,6 +39,12 @@ def get_conf_example_glob(check, agent_version_major):
         return '{conf_dir}/{check}.d/conf*'.format(conf_dir=A6_CONF_DIR, check=check)
     else:
         return '{conf_dir}/{check}*'.format(conf_dir=A5_CONF_DIR, check=check)
+
+
+def copy_dict_update(d1, d2):
+    d1 = deepcopy(d1)
+    d1.update(d2)
+    return d1
 
 
 def string_to_toml_type(s):
