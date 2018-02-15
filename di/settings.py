@@ -27,16 +27,14 @@ CHECK_SETTINGS = OrderedDict([
         ('version', OrderedDict([
             (DEFAULT_NAME, 'latest'),
             ('info', 'The nginx Docker image tag.'),
-            ('supported_flavors', ['stub', ]),
+            ('supported_flavors', ('stub', )),
         ])),
     ])),
 ])
 
-DEFAULT_SETTINGS = copy_dict_merge(APP_SETTINGS, CHECK_SETTINGS)
-
 
 def copy_default_settings():
-    return deepcopy(DEFAULT_SETTINGS)
+    return copy_dict_merge(APP_SETTINGS, copy_check_defaults())
 
 
 def copy_check_defaults(check_name=None):
@@ -73,4 +71,4 @@ def save_settings(settings):
 
 def restore_settings():
     create_file(SETTINGS_FILE)
-    save_settings(DEFAULT_SETTINGS)
+    save_settings(copy_default_settings())
