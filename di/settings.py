@@ -13,7 +13,7 @@ APP_SETTINGS = OrderedDict([
     ('agent', 6),
     ('agent6', 'datadog/agent-dev:master'),
     ('agent5', 'datadog/dev-dd-agent:master'),
-    ('api_key', '$DD_API_KEY'),
+    ('api_key', '${DD_API_KEY}'),
     ('core', os.path.expanduser(os.path.join('~', 'dd', 'integrations-core'))),
     ('extras', os.path.expanduser(os.path.join('~', 'dd', 'integrations-extras'))),
     ('dev', OrderedDict([
