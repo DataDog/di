@@ -1,8 +1,8 @@
 import os
-from collections import OrderedDict
 
+from di.settings import copy_check_defaults
 from di.structures import File
-from di.utils import DEFAULT_NAME, copy_dict_merge, get_check_mount_dir, get_conf_path
+from di.utils import DEFAULT_NAME, dict_merge, get_check_mount_dir, get_conf_path
 
 COMPOSE_YAML = """\
 version: '3'
@@ -52,15 +52,6 @@ class NginxStub:
     name = 'nginx'
     flavor = 'stub'
     container_prefix = 'agent_{name}_{flavor}'.format(name=name, flavor=flavor)
-    option_defaults = OrderedDict([
-        ('version', 'latest'),
-    ])
-    option_info = OrderedDict([
-        ('version', (
-            'The docker image version e.g. the `1.13.8` in `nginx:1.13.8`. '
-            'The default is `latest`.'
-        )),
-    ])
 
     def __init__(self, d, image, agent_version, api_key, conf_path, conf_contents,
                  dev_check_dir=None, instance_name=None, no_instance=False, **options):
@@ -92,7 +83,7 @@ class NginxStub:
                     conf_path_local=conf_path_local,
                     conf_path_mount=get_conf_path(self.name, agent_version),
                     check_mount=check_mount,
-                    **copy_dict_merge(self.option_defaults, options)
+                    **dict_merge(copy_check_defaults(self.name), options)
                 )
             ),
             status_path: File(

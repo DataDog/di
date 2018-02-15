@@ -5,11 +5,11 @@ from copy import deepcopy
 import toml
 from atomicwrites import atomic_write
 
-from di.utils import APP_DIR, create_file, ensure_dir_exists
+from di.utils import APP_DIR, DEFAULT_NAME, copy_dict_merge, create_file, ensure_dir_exists
 
 SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 
-DEFAULT_SETTINGS = OrderedDict([
+APP_SETTINGS = OrderedDict([
     ('mode', 'prod'),
     ('agent', 6),
     ('agent6', 'datadog/agent:latest'),
@@ -22,9 +22,40 @@ DEFAULT_SETTINGS = OrderedDict([
     ])),
 ])
 
+CHECK_SETTINGS = OrderedDict([
+    ('nginx', OrderedDict([
+        ('version', OrderedDict([
+            (DEFAULT_NAME, 'latest'),
+            ('info', 'The nginx Docker image tag.'),
+            ('supported_flavors', ['stub', ]),
+        ])),
+    ])),
+])
+
+DEFAULT_SETTINGS = copy_dict_merge(APP_SETTINGS, CHECK_SETTINGS)
+
 
 def copy_default_settings():
     return deepcopy(DEFAULT_SETTINGS)
+
+
+def copy_check_defaults(check_name=None):
+    defaults = OrderedDict()
+
+    if check_name:
+        options = CHECK_SETTINGS.get(check_name, {})
+
+        for option in options:
+            defaults[option] = options[option][DEFAULT_NAME]
+    else:
+        for check in CHECK_SETTINGS:
+            defaults[check] = OrderedDict()
+            options = CHECK_SETTINGS[check]
+
+            for option in options:
+                defaults[check][option] = options[option][DEFAULT_NAME]
+
+    return defaults
 
 
 def load_settings(lazy=False):
