@@ -73,8 +73,16 @@ def string_to_toml_type(s):
     return s
 
 
+def file_exists(f):
+    return os.path.isfile(f)
+
+
+def dir_exists(d):
+    return os.path.isdir(d)
+
+
 def ensure_dir_exists(d):
-    if not os.path.exists(d):
+    if not dir_exists(d):
         os.makedirs(d)
 
 
