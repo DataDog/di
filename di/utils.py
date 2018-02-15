@@ -55,6 +55,11 @@ def copy_dict_merge(d1, d2):
     return d1
 
 
+def dict_merge(d1, d2):
+    d1.update(d2)
+    return d1
+
+
 def string_to_toml_type(s):
     if s.isdigit():
         s = int(s)
