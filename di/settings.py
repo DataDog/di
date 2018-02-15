@@ -1,6 +1,5 @@
 import os
 from collections import OrderedDict
-from copy import deepcopy
 
 import toml
 from atomicwrites import atomic_write
