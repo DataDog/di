@@ -12,7 +12,7 @@ SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 APP_SETTINGS = OrderedDict([
     ('mode', 'prod'),
     ('agent', 6),
-    ('agent6', 'datadog/agent:latest'),
+    ('agent6', 'datadog/agent-dev:master'),
     ('agent5', 'datadog/dev-dd-agent:master'),
     ('api_key', '$DD_API_KEY'),
     ('core', os.path.expanduser(os.path.join('~', 'dd', 'integrations-core'))),
