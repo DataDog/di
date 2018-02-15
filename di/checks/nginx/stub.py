@@ -2,7 +2,7 @@ import os
 from collections import OrderedDict
 
 from di.structures import File
-from di.utils import copy_dict_update, get_check_mount_dir, get_conf_path
+from di.utils import DEFAULT_NAME, copy_dict_update, get_check_mount_dir, get_conf_path
 
 COMPOSE_YAML = """\
 version: '3'
@@ -107,14 +107,14 @@ class NginxStub:
 
     @classmethod
     def get_container_name(cls, instance_name=None):
-        return '{}_{}'.format(cls.container_prefix, instance_name or 'default')
+        return '{}_{}'.format(cls.container_prefix, instance_name or DEFAULT_NAME)
 
     @classmethod
     def get_location(cls, d, instance_name=None, no_instance=False):
         if no_instance:
             return os.path.join(d, cls.name, cls.flavor)
         else:
-            return os.path.join(d, cls.name, cls.flavor, '{}'.format(instance_name or 'default'))
+            return os.path.join(d, cls.name, cls.flavor, '{}'.format(instance_name or DEFAULT_NAME))
 
     def write(self):
         for f in self.files.values():

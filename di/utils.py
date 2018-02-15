@@ -13,6 +13,7 @@ from appdirs import user_data_dir
 from di.agent import A5_CONF_DIR, A5_EXE_PATH, A6_CONF_DIR, A6_EXE_PATH
 
 APP_DIR = user_data_dir('di-dev', '')
+DEFAULT_NAME = 'default'
 
 __platform = platform.system()
 ON_MACOS = os.name == 'mac' or __platform == 'Darwin'
