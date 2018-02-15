@@ -54,8 +54,8 @@ class NginxStub:
     container_prefix = 'agent_{name}_{flavor}'.format(name=name, flavor=flavor)
 
     def __init__(self, d, image, agent_version, api_key, conf_path, conf_contents,
-                 dev_check_dir=None, instance_name=None, no_instance=False, **options):
-        self.location = self.get_location(d, instance_name, no_instance)
+                 dev_check_dir=None, instance_name=None, no_instance=False, direct=False, **options):
+        self.location = self.get_location(d, instance_name, no_instance, direct)
         compose_path = os.path.join(self.location, 'docker-compose.yaml')
         status_path = os.path.join(self.location, 'status.conf')
         conf_path_local = conf_path or os.path.join(
@@ -101,8 +101,10 @@ class NginxStub:
         return '{}_{}'.format(cls.container_prefix, instance_name or DEFAULT_NAME)
 
     @classmethod
-    def get_location(cls, d, instance_name=None, no_instance=False):
-        if no_instance:
+    def get_location(cls, d, instance_name=None, no_instance=False, direct=False):
+        if direct:
+            return d
+        elif no_instance:
             return os.path.join(d, cls.name, cls.flavor)
         else:
             return os.path.join(d, cls.name, cls.flavor, '{}'.format(instance_name or DEFAULT_NAME))
