@@ -49,9 +49,9 @@ def get_conf_example_glob(check, agent_version_major):
         return '{conf_dir}/{check}*'.format(conf_dir=A5_CONF_DIR, check=check)
 
 
-def copy_dict_update(d1, d2):
+def copy_dict_merge(d1, d2):
     d1 = deepcopy(d1)
-    d1.update(d2)
+    d1.update(deepcopy(d2))
     return d1
 
 

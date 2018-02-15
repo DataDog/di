@@ -2,7 +2,7 @@ import os
 from collections import OrderedDict
 
 from di.structures import File
-from di.utils import DEFAULT_NAME, copy_dict_update, get_check_mount_dir, get_conf_path
+from di.utils import DEFAULT_NAME, copy_dict_merge, get_check_mount_dir, get_conf_path
 
 COMPOSE_YAML = """\
 version: '3'
@@ -92,7 +92,7 @@ class NginxStub:
                     conf_path_local=conf_path_local,
                     conf_path_mount=get_conf_path(self.name, agent_version),
                     check_mount=check_mount,
-                    **copy_dict_update(self.option_defaults, options)
+                    **copy_dict_merge(self.option_defaults, options)
                 )
             ),
             status_path: File(
