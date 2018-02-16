@@ -93,3 +93,9 @@ def container_running(container):
     ], shell=NEED_SUBPROCESS_SHELL)
 
     return len(process.stdout.decode().strip().splitlines()) > 1, process.returncode
+
+
+def compose_active():
+    process = subprocess.run(['docker-compose', 'top'], shell=NEED_SUBPROCESS_SHELL)
+
+    return not not process.stdout.decode().strip(), process.returncode
