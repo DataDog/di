@@ -4,7 +4,9 @@ from collections import OrderedDict
 import toml
 from atomicwrites import atomic_write
 
-from di.utils import APP_DIR, DEFAULT_NAME, copy_dict_merge, create_file, ensure_dir_exists
+from di.utils import (
+    APP_DIR, DEFAULT_NAME, copy_dict_merge, ensure_parent_dir_exists
+)
 
 SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 
@@ -55,19 +57,27 @@ def copy_check_defaults(check_name=None):
     return defaults
 
 
-def load_settings(lazy=False):
-    if lazy and not os.path.exists(SETTINGS_FILE):
-        return OrderedDict()
-    with open(SETTINGS_FILE, 'r') as f:
-        return toml.loads(f.read(), OrderedDict)
+def load_settings():
+    default_settings = copy_default_settings()
+
+    try:
+        with open(SETTINGS_FILE, 'r') as f:
+            default_settings.update(toml.loads(f.read(), OrderedDict))
+    except FileNotFoundError:
+        pass
+
+    return default_settings
 
 
 def save_settings(settings):
-    ensure_dir_exists(os.path.dirname(SETTINGS_FILE))
+    ensure_parent_dir_exists(SETTINGS_FILE)
     with atomic_write(SETTINGS_FILE, overwrite=True) as f:
         f.write(toml.dumps(settings))
 
 
 def restore_settings():
-    create_file(SETTINGS_FILE)
     save_settings(copy_default_settings())
+
+
+def update_settings():
+    save_settings(load_settings())

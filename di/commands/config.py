@@ -5,34 +5,28 @@ import toml
 from di.commands.utils import CONTEXT_SETTINGS, echo_info, echo_success
 from di.settings import (
     SETTINGS_FILE, copy_default_settings, load_settings, restore_settings,
-    save_settings
+    save_settings, update_settings
 )
 from di.utils import string_to_toml_type
 
 
 @click.group(context_settings=CONTEXT_SETTINGS, invoke_without_command=True,
              short_help='Locates, updates, or restores the config file')
-@click.option('-u', '--update', 'update_settings', is_flag=True,
+@click.option('-u', '--update', is_flag=True,
               help='Updates the config file with any new fields.')
 @click.option('--restore', is_flag=True,
               help='Restores the config file to default settings.')
 @click.pass_context
-def config(ctx, update_settings, restore):
+def config(ctx, update, restore):
     """Locates, updates, or restores the config file.
 
     \b
     $ di config
     Settings location: /home/ofek/.local/share/di-dev/settings.toml
     """
-    if update_settings:
-        try:
-            user_settings = load_settings()
-            updated_settings = copy_default_settings()
-            updated_settings.update(user_settings)
-            save_settings(updated_settings)
-            echo_success('Settings were successfully updated.')
-        except FileNotFoundError:
-            restore = True
+    if update:
+        update_settings()
+        echo_success('Settings were successfully updated.')
 
     if restore:
         restore_settings()
@@ -55,10 +49,7 @@ def set_value(key, value):
     [nginx]
     version = "1.13.8"
     """
-    try:
-        user_settings = load_settings()
-    except FileNotFoundError:
-        user_settings = copy_default_settings()
+    user_settings = load_settings()
 
     updated_settings = {}
     new_settings = updated_settings
