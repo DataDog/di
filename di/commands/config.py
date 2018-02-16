@@ -11,7 +11,7 @@ from di.utils import string_to_toml_type
 
 @click.group(context_settings=CONTEXT_SETTINGS, invoke_without_command=True,
              short_help='Locates, updates, or restores the config file')
-@click.option('-u', '--update', is_flag=True,
+@click.option('--update', '-u', is_flag=True,
               help='Updates the config file with any new fields.')
 @click.option('--restore', is_flag=True,
               help='Restores the config file to default settings.')
