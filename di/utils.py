@@ -129,13 +129,16 @@ def remove_path(path):
             pass
 
 
-def resolve_path(path):
+def resolve_path(path, strict=False):
+    path = os.path.expanduser(path)
+
     try:
         path = str(Path(path).resolve())
     # FUTURE: Remove this when we drop 3.5.
     except FileNotFoundError:  # no cov
-        return ''
-    return path if os.path.exists(path) else ''
+        path = os.path.realpath(path)
+
+    return '' if strict and not os.path.exists(path) else path
 
 
 def basepath(path):
