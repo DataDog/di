@@ -54,12 +54,9 @@ class NginxStub(Check):
 
     def __init__(self, d, image, agent_version, api_key, conf_path, conf_contents,
                  dev_check_dir=None, instance_name=None, no_instance=False, direct=False, **options):
-        super().__init__(d, instance_name, no_instance, direct)
+        super().__init__(d, conf_path, instance_name, no_instance, direct)
 
         status_path = os.path.join(self.location, 'status.conf')
-        conf_path_local = conf_path or os.path.join(
-            self.location, '{name}.yaml'.format(name=self.name)
-        )
 
         # Correct domain; localhost is per container
         conf_contents = conf_contents.replace('localhost', 'nginx:81', 1)
@@ -79,18 +76,18 @@ class NginxStub(Check):
                     status_path=status_path,
                     container_name=self.get_container_name(instance_name),
                     api_key=api_key,
-                    conf_path_local=conf_path_local,
+                    conf_path_local=self.conf_path_local,
                     conf_path_mount=get_conf_path(self.name, agent_version),
                     check_mount=check_mount,
                     **dict_merge(copy_check_defaults(self.name), options)
                 )
             ),
+            self.conf_path_local: File(
+                self.conf_path_local,
+                conf_contents
+            ),
             status_path: File(
                 status_path,
                 STATUS_CONF
             ),
-            conf_path_local: File(
-                conf_path_local,
-                conf_contents
-            )
         })

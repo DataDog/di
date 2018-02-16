@@ -23,9 +23,12 @@ class Check:
     name = 'check'
     flavor = DEFAULT_NAME
 
-    def __init__(self, d, instance_name=None, no_instance=False, direct=False):
+    def __init__(self, d, conf_path, instance_name=None, no_instance=False, direct=False):
         self.location = self.get_location(d, instance_name, no_instance, direct)
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
+        self.conf_path_local = conf_path or os.path.join(
+            self.location, '{name}.yaml'.format(name=self.name)
+        )
         self.files = {}
 
     @classmethod
