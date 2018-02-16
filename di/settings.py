@@ -5,12 +5,13 @@ import toml
 from atomicwrites import atomic_write
 
 from di.utils import (
-    APP_DIR, DEFAULT_NAME, copy_dict_merge, ensure_parent_dir_exists
+    APP_DIR, CHECKS_DIR, DEFAULT_NAME, copy_dict_merge, ensure_parent_dir_exists
 )
 
 SETTINGS_FILE = os.path.join(APP_DIR, 'settings.toml')
 
 APP_SETTINGS = OrderedDict([
+    ('location', CHECKS_DIR),
     ('mode', 'prod'),
     ('agent', 6),
     ('agent6', 'datadog/agent-dev:master'),
