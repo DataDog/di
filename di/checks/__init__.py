@@ -6,6 +6,6 @@ from .nginx import NginxStub
 Checks = __OD([
     ('nginx', __OD([
         (DEFAULT_NAME, NginxStub),
-        ('stub', NginxStub),
+        (NginxStub.name, NginxStub),
     ])),
 ])
