@@ -4,8 +4,7 @@ import toml
 
 from di.commands.utils import CONTEXT_SETTINGS, echo_info, echo_success
 from di.settings import (
-    SETTINGS_FILE, copy_default_settings, load_settings, restore_settings,
-    save_settings, update_settings
+    SETTINGS_FILE, load_settings, restore_settings, save_settings, update_settings
 )
 from di.utils import string_to_toml_type
 
