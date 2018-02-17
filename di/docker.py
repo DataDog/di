@@ -2,7 +2,7 @@ import os
 import subprocess
 
 from di.agent import A6_CONF_DIR
-from di.utils import NEED_SUBPROCESS_SHELL, get_agent_exe_path, get_check_dir
+from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_agent_exe_path, get_check_dir
 
 # Must be a certain length
 __API_KEY = 'a' * 32
@@ -95,7 +95,8 @@ def container_running(container):
     return len(process.stdout.decode().strip().splitlines()) > 1, process.returncode
 
 
-def compose_active():
-    process = subprocess.run(['docker-compose', 'top'], shell=NEED_SUBPROCESS_SHELL)
+def check_dir_active(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'top'], shell=NEED_SUBPROCESS_SHELL)
 
     return not not process.stdout.decode().strip(), process.returncode
