@@ -1,6 +1,6 @@
 import os
 
-from di.utils import DEFAULT_NAME, ensure_parent_dir_exists
+from di.utils import DEFAULT_NAME, ensure_parent_dir_exists, get_check_mount_dir
 
 
 class File:
@@ -28,6 +28,12 @@ class Check:
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
         self.conf_path_local = conf_path or os.path.join(
             self.location, '{name}.yaml'.format(name=self.name)
+        )
+        self.check_mount = '' if not conf_path else (
+            '- {check_dir_local}:{check_dir_mount}'.format(
+                check_dir_local=os.path.dirname(conf_path),
+                check_dir_mount=get_check_mount_dir()
+            )
         )
         self.files = {}
 
