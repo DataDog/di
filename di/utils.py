@@ -130,7 +130,7 @@ def remove_path(path):
 
 
 def resolve_path(path, strict=False):
-    path = os.path.expanduser(path)
+    path = os.path.expanduser(path or '')
 
     try:
         path = str(Path(path).resolve())
