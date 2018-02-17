@@ -2,7 +2,7 @@ import os
 
 from di.settings import copy_check_defaults
 from di.structures import Check, File
-from di.utils import dict_merge, get_conf_path
+from di.utils import dict_merge
 
 COMPOSE_YAML = """\
 version: '3'
@@ -17,9 +17,9 @@ services:
     image: {image}
     container_name: {container_name}
     environment:
-        - DD_API_KEY={api_key}
+        {api_key}
     volumes:
-        - {conf_path_local}:{conf_path_mount}
+        {conf_mount}
         {check_mount}
     links:
         - nginx
@@ -53,9 +53,13 @@ class NginxStub(Check):
     name = 'nginx'
     flavor = 'stub'
 
-    def __init__(self, d, image, agent_version, api_key, conf_path, conf_contents,
+    def __init__(self, d, image, api_key, conf_path, conf_contents, agent_version,
                  instance_name=None, no_instance=False, direct=False, **options):
-        super().__init__(d, conf_path, instance_name, no_instance, direct)
+        super().__init__(
+            d=d, image=image, api_key=api_key, conf_path=conf_path,
+            agent_version=agent_version, instance_name=instance_name,
+            no_instance=no_instance, direct=direct
+        )
 
         status_path = os.path.join(self.location, 'status.conf')
 
@@ -66,13 +70,12 @@ class NginxStub(Check):
             self.compose_path: File(
                 self.compose_path,
                 COMPOSE_YAML.format(
-                    image=image,
-                    status_path=status_path,
-                    container_name=self.get_container_name(instance_name),
-                    api_key=api_key,
-                    conf_path_local=self.conf_path_local,
-                    conf_path_mount=get_conf_path(self.name, agent_version),
+                    image=self.image,
+                    api_key=self.api_key,
+                    container_name=self.container_name,
+                    conf_mount=self.conf_mount,
                     check_mount=self.check_mount,
+                    status_path=status_path,
                     **dict_merge(copy_check_defaults(self.name), options)
                 )
             ),

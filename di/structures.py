@@ -1,6 +1,8 @@
 import os
 
-from di.utils import DEFAULT_NAME, ensure_parent_dir_exists, get_check_mount_dir
+from di.utils import (
+    DEFAULT_NAME, ensure_parent_dir_exists, get_check_mount_dir, get_conf_path
+)
 
 
 class File:
@@ -23,11 +25,19 @@ class Check:
     name = 'check'
     flavor = DEFAULT_NAME
 
-    def __init__(self, d, conf_path, instance_name=None, no_instance=False, direct=False):
+    def __init__(self, d, image, api_key, conf_path, agent_version,
+                 instance_name=None, no_instance=False, direct=False):
+        self.image = image
+        self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
+        self.container_name = self.get_container_name(instance_name)
         self.location = self.get_location(d, instance_name, no_instance, direct)
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
         self.conf_path_local = conf_path or os.path.join(
             self.location, '{name}.yaml'.format(name=self.name)
+        )
+        self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
+            conf_path_local=self.conf_path_local,
+            conf_path_mount=get_conf_path(self.name, agent_version)
         )
         self.check_mount = '' if not conf_path else (
             '- {check_dir_local}:{check_dir_mount}'.format(
