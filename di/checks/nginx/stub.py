@@ -1,8 +1,6 @@
 import os
 
-from di.settings import copy_check_defaults
 from di.structures import Check, File
-from di.utils import dict_merge
 
 COMPOSE_YAML = """\
 version: '3'
@@ -70,13 +68,13 @@ class NginxStub(Check):
             self.compose_path: File(
                 self.compose_path,
                 COMPOSE_YAML.format(
+                    status_path=status_path,
                     image=self.image,
                     api_key=self.api_key,
                     container_name=self.container_name,
                     conf_mount=self.conf_mount,
                     check_mount=self.check_mount,
-                    status_path=status_path,
-                    **dict_merge(copy_check_defaults(self.name), options)
+                    **self.expand_options(options)
                 )
             ),
             self.conf_path_local: File(

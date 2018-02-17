@@ -1,7 +1,8 @@
 import os
 
+from di.settings import copy_check_defaults
 from di.utils import (
-    DEFAULT_NAME, ensure_parent_dir_exists, get_check_mount_dir, get_conf_path
+    DEFAULT_NAME, dict_merge, ensure_parent_dir_exists, get_check_mount_dir, get_conf_path
 )
 
 
@@ -46,6 +47,10 @@ class Check:
             )
         )
         self.files = {}
+
+    @classmethod
+    def expand_options(cls, options):
+        return dict_merge(copy_check_defaults(cls.name), options)
 
     @classmethod
     def get_container_prefix(cls):
