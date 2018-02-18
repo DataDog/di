@@ -56,13 +56,14 @@ class Check:
 class DockerCheck(Check):
     def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
                  instance_name=None, no_instance=False, direct=False, **options):
+        self.image = options.pop('image', '')
+
         super().__init__(
             d=d, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 
         self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
-        self.image = options.get('image', '')
         self.container_name = self.get_container_name(instance_name)
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
         self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
