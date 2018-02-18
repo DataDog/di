@@ -59,6 +59,11 @@ def find_matching_file(f):
         return ''
 
 
+def read_file(file):
+    with open(file, 'r') as f:
+        return f.read()
+
+
 def file_exists(f):
     return os.path.isfile(f)
 
