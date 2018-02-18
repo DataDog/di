@@ -19,9 +19,7 @@ APP_SETTINGS = OrderedDict([
     ('api_key', '${DD_API_KEY}'),
     ('core', os.path.expanduser(os.path.join('~', 'dd', 'integrations-core'))),
     ('extras', os.path.expanduser(os.path.join('~', 'dd', 'integrations-extras'))),
-    ('dev', OrderedDict([
-        ('copy_conf', True),
-    ])),
+    ('copy_conf', True),
 ])
 
 CHECK_SETTINGS = OrderedDict([
