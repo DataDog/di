@@ -26,39 +26,17 @@ class Check:
     name = 'check'
     flavor = DEFAULT_NAME
 
-    def __init__(self, d, image, api_key, conf_path, agent_version,
-                 instance_name=None, no_instance=False, direct=False):
-        self.image = image
-        self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
-        self.container_name = self.get_container_name(instance_name)
+    def __init__(self, d, conf_path, agent_version, check_dir=None,
+                 instance_name=None, no_instance=False, direct=False, **options):
         self.location = self.get_location(d, instance_name, no_instance, direct)
-        self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
         self.conf_path_local = conf_path or os.path.join(
             self.location, '{name}.yaml'.format(name=self.name)
         )
-        self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
-            conf_path_local=self.conf_path_local,
-            conf_path_mount=get_conf_path(self.name, agent_version)
-        )
-        self.check_mount = '' if not conf_path else (
-            '- {check_dir_local}:{check_dir_mount}'.format(
-                check_dir_local=os.path.dirname(conf_path),
-                check_dir_mount=get_check_mount_dir()
-            )
-        )
+        self.conf_path_mount = get_conf_path(self.name, agent_version)
+        self.check_dir_local = check_dir or ''
+        self.check_dir_mount = get_check_mount_dir()
+        self.options = dict_merge(copy_check_defaults(self.name), options)
         self.files = {}
-
-    @classmethod
-    def expand_options(cls, options):
-        return dict_merge(copy_check_defaults(cls.name), options)
-
-    @classmethod
-    def get_container_prefix(cls):
-        return 'agent_{name}_{flavor}'.format(name=cls.name, flavor=cls.flavor)
-
-    @classmethod
-    def get_container_name(cls, instance_name=None):
-        return '{}_{}'.format(cls.get_container_prefix(), instance_name or DEFAULT_NAME)
 
     @classmethod
     def get_location(cls, d, instance_name=None, no_instance=False, direct=False):
@@ -72,3 +50,46 @@ class Check:
     def write(self):
         for f in self.files.values():
             f.write()
+
+
+class DockerCheck(Check):
+    def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
+                 instance_name=None, no_instance=False, direct=False, **options):
+        super().__init__(
+            d=d, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
+            instance_name=instance_name, no_instance=no_instance, direct=direct, **options
+        )
+
+        self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
+        self.image = options.get('image', '')
+        self.container_name = self.get_container_name(instance_name)
+        self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
+        self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
+            conf_path_local=self.conf_path_local,
+            conf_path_mount=self.conf_path_mount
+        )
+        self.check_mount = '' if not self.check_dir_local else (
+            '- {check_dir_local}:{check_dir_mount}'.format(
+                check_dir_local=self.check_dir_local,
+                check_dir_mount=self.check_dir_mount
+            )
+        )
+
+    @classmethod
+    def get_container_prefix(cls):
+        return 'agent_{name}_{flavor}'.format(name=cls.name, flavor=cls.flavor)
+
+    @classmethod
+    def get_container_name(cls, instance_name=None):
+        return '{}_{}'.format(cls.get_container_prefix(), instance_name or DEFAULT_NAME)
+
+
+class VagrantCheck(Check):
+    def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
+                 instance_name=None, no_instance=False, direct=False, **options):
+        super().__init__(
+            d=d, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
+            instance_name=instance_name, no_instance=no_instance, direct=direct, **options
+        )
+
+        self.api_key = api_key
