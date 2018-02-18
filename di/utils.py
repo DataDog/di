@@ -29,27 +29,6 @@ def get_check_dir(check):
     return '{}/{}'.format(get_check_mount_dir(), check)
 
 
-def get_agent_exe_path(agent_version_major):
-    if int(agent_version_major) >= 6:
-        return A6_EXE_PATH
-    else:
-        return A5_EXE_PATH
-
-
-def get_conf_path(check, agent_version_major):
-    if int(agent_version_major) >= 6:
-        return '{conf_dir}/{check}.d/{check}.yaml'.format(conf_dir=A6_CONF_DIR, check=check)
-    else:
-        return '{conf_dir}/{check}.yaml'.format(conf_dir=A5_CONF_DIR, check=check)
-
-
-def get_conf_example_glob(check, agent_version_major):
-    if int(agent_version_major) >= 6:
-        return '{conf_dir}/{check}.d/conf*'.format(conf_dir=A6_CONF_DIR, check=check)
-    else:
-        return '{conf_dir}/{check}*'.format(conf_dir=A5_CONF_DIR, check=check)
-
-
 def copy_dict_merge(d1, d2):
     d1 = deepcopy(d1)
     d1.update(deepcopy(d2))

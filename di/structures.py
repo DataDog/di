@@ -1,8 +1,9 @@
 import os
 
+from di.agent import get_conf_path
 from di.settings import copy_check_defaults
 from di.utils import (
-    DEFAULT_NAME, dict_merge, ensure_parent_dir_exists, get_check_mount_dir, get_conf_path
+    DEFAULT_NAME, dict_merge, ensure_parent_dir_exists, get_check_mount_dir
 )
 
 
