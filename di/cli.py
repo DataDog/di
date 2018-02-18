@@ -1,7 +1,7 @@
 import click
 
 from di.commands import (
-    config
+    config, start
 )
 from di.commands.utils import CONTEXT_SETTINGS
 
@@ -13,3 +13,4 @@ def di():
 
 
 di.add_command(config)
+di.add_command(start)
