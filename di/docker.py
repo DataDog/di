@@ -1,8 +1,8 @@
 import os
 import subprocess
 
-from di.agent import A6_CONF_DIR
-from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_agent_exe_path, get_check_dir
+from di.agent import A6_CONF_DIR, get_agent_exe_path
+from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 # Must be a certain length
 __API_KEY = 'a' * 32
