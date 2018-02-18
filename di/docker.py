@@ -2,7 +2,7 @@ import os
 import subprocess
 from subprocess import PIPE
 
-from di.agent import A6_CONF_DIR, get_agent_exe_path
+from di.agent import A6_CONF_DIR, get_agent_exe_path, get_conf_example_glob
 from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 # Must be a certain length
@@ -80,6 +80,17 @@ def read_file(path, image):
 
 
 def read_matching_glob(glob, image):
+    process = subprocess.run([
+        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
+        "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
+    ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.stdout.decode(), process.returncode
+
+
+def read_check_example_conf(check, image, agent_version_major=None):
+    agent_version_major = agent_version_major or get_agent_version(image)
+    glob = get_conf_example_glob(check, agent_version_major)
     process = subprocess.run([
         'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
         "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
