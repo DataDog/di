@@ -1,5 +1,6 @@
 import os
 import subprocess
+from subprocess import PIPE
 
 from di.agent import A6_CONF_DIR, get_agent_exe_path
 from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_check_dir
@@ -32,7 +33,7 @@ def get_agent_version(image_or_container, running=False):
     if running:
         version = subprocess.run([
             'docker', 'exec', image_or_container, 'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
 
         if not version.isdigit():
             if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container, running=running):
@@ -43,7 +44,7 @@ def get_agent_version(image_or_container, running=False):
         version = subprocess.run([
             'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
             'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
 
         if not version.isdigit():
             if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container, running=running):
@@ -59,12 +60,12 @@ def dir_exists(d, image_or_container, running=False):
         process = subprocess.run([
             'docker', 'exec', image_or_container, 'python', '-c',
             "import os;print(os.path.isdir('{d}'))".format(d=d)
-        ], shell=NEED_SUBPROCESS_SHELL)
+        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
     else:
         process = subprocess.run([
             'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
             'python', '-c', "import os;print(os.path.isdir('{d}'))".format(d=d)
-        ], shell=NEED_SUBPROCESS_SHELL)
+        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return process.stdout.decode().strip(), process.returncode
 
@@ -73,7 +74,7 @@ def read_file(path, image):
     process = subprocess.run([
         'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
         "import sys;sys.stdout.write(open('{path}', 'r').read())".format(path=path)
-    ], shell=NEED_SUBPROCESS_SHELL)
+    ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return process.stdout.decode(), process.returncode
 
@@ -82,7 +83,7 @@ def read_matching_glob(glob, image):
     process = subprocess.run([
         'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
         "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
-    ], shell=NEED_SUBPROCESS_SHELL)
+    ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return process.stdout.decode(), process.returncode
 
@@ -90,13 +91,13 @@ def read_matching_glob(glob, image):
 def container_running(container):
     process = subprocess.run([
         'docker', 'ps', '-f', 'name={container}'.format(container=container)
-    ], shell=NEED_SUBPROCESS_SHELL)
+    ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return len(process.stdout.decode().strip().splitlines()) > 1, process.returncode
 
 
 def check_dir_active(d):
     with chdir(d):
-        process = subprocess.run(['docker-compose', 'top'], shell=NEED_SUBPROCESS_SHELL)
+        process = subprocess.run(['docker-compose', 'top'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return not not process.stdout.decode().strip(), process.returncode
