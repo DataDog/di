@@ -4,13 +4,12 @@ import shutil
 from ast import literal_eval
 from contextlib import contextmanager
 from copy import deepcopy
+from glob import glob
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.request import urlopen
 
 from appdirs import user_data_dir
-
-from di.agent import A5_CONF_DIR, A5_EXE_PATH, A6_CONF_DIR, A6_EXE_PATH
 
 APP_DIR = user_data_dir('di-dev', '')
 CHECKS_DIR = os.path.join(APP_DIR, 'checks')
@@ -51,6 +50,13 @@ def string_to_toml_type(s):
         s = literal_eval(s)
 
     return s
+
+
+def find_matching_file(f):
+    try:
+        return glob('{}*'.format(f))[0]
+    except IndexError:
+        return ''
 
 
 def file_exists(f):
