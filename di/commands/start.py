@@ -28,14 +28,15 @@ from di.utils import (
 @click.option('--location', '-l', default='')
 @click.option('--force', '-f', is_flag=True)
 @click.option('--api_key', '-key')
+@click.option('--ignore-missing', '-im', is_flag=True)
 @click.option('--prod/--dev', default=None)
 @click.option('--copy-conf/--use-conf', default=None)
 @click.option('--core', default='')
 @click.option('--extras', default='')
 @click.option('--agent', '-a', type=click.INT)
 @click.option('--image', '-i', default='')
-def start(check_name, flavor, instance_name, options, no_instance, direct,
-          location, force, api_key, prod, copy_conf, core, extras, agent, image):
+def start(check_name, flavor, instance_name, options, no_instance, direct, location, force,
+          api_key, ignore_missing, prod, copy_conf, core, extras, agent, image):
     """Starts a fully functioning integration.
 
     \b
@@ -66,10 +67,13 @@ def start(check_name, flavor, instance_name, options, no_instance, direct,
 
     user_api_key = api_key or settings.get('api_key', '${DD_API_KEY}')
     api_key, evar = get_compose_api_key(user_api_key)
-    if api_key != user_api_key:
+    if not ignore_missing and api_key != user_api_key:
         echo_warning(
-            "Environment variable {} doesn't; a well-formatted fake API key will be used instead.".format(evar)
+            "Environment variable {} doesn't exist; a well-formatted "
+            "fake API key will be used instead.".format(evar)
         )
+    else:
+        api_key = user_api_key
 
     location = location or settings.get('location', CHECKS_DIR)
     prod = prod if prod is not None else settings.get('mode', 'prod') == 'prod'
