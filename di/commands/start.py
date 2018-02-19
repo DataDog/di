@@ -39,10 +39,18 @@ def start(check_name, flavor, instance_name, options, no_instance, direct,
     """Starts a fully functioning integration.
 
     \b
-    $ di config set nginx.version 1.13.8
-    New setting:
-    [nginx]
-    version = "1.13.8"
+    $ di start nginx
+    Using docker image `datadog/agent-dev:master`
+    Detecting the agent's major version...
+    Agent 6 detected
+    Reading the configuration file for `nginx`...
+    Creating necessary files...
+    Successfully wrote:
+      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\nginx.yaml
+      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\docker-compose.yaml
+      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\status.conf
+
+    To run this check, do `di check nginx`.
     """
     if check_name not in Checks:
         echo_failure('Check `{}` is not yet supported.'.format(check_name))
