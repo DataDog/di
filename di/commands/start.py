@@ -46,9 +46,9 @@ def start(check_name, flavor, instance_name, options, no_instance, direct,
     Reading the configuration file for `nginx`...
     Creating necessary files...
     Successfully wrote:
-      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\nginx.yaml
-      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\docker-compose.yaml
-      C:\Users\Ofek\AppData\Local\di-dev\checks\nginx\stub\default\status.conf
+      C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\nginx.yaml
+      C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\docker-compose.yaml
+      C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\status.conf
 
     To run this check, do `di check nginx`.
     """
