@@ -3,7 +3,8 @@ import os
 from di.agent import get_conf_path
 from di.settings import copy_check_defaults
 from di.utils import (
-    DEFAULT_NAME, dict_merge, ensure_parent_dir_exists, get_check_mount_dir
+    DEFAULT_NAME, basepath, dict_merge, ensure_parent_dir_exists,
+    get_check_mount_dir, resolve_path
 )
 
 
@@ -48,6 +49,11 @@ class Check:
         else:
             return os.path.join(d, cls.name, cls.flavor, '{}'.format(instance_name or DEFAULT_NAME))
 
+    def make_relative(self, path):
+        if resolve_path(os.path.dirname(path)) == resolve_path(self.location):
+            path = './{}'.format(basepath(path))
+        return path
+
     def write(self):
         for f in self.files.values():
             f.write()
@@ -66,13 +72,13 @@ class DockerCheck(Check):
         self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
         self.container_name = self.get_container_name(instance_name)
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
-        self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
-            conf_path_local=self.conf_path_local,
+        self.conf_mount = '- ./{conf_path_local}:{conf_path_mount}'.format(
+            conf_path_local=self.make_relative(self.conf_path_local),
             conf_path_mount=self.conf_path_mount
         )
         self.check_mount = '' if not self.check_dir_local else (
             '- {check_dir_local}:{check_dir_mount}'.format(
-                check_dir_local=self.check_dir_local,
+                check_dir_local=self.make_relative(self.check_dir_local),
                 check_dir_mount=self.check_dir_mount
             )
         )
