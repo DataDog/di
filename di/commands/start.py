@@ -156,6 +156,7 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
     echo_waiting('Starting containers...')
     output, error = check_dir_start(location)
     if error:
+        click.echo()
         click.echo(output.rstrip())
         echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
         sys.exit(error)
