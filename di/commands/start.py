@@ -8,7 +8,7 @@ from di.checks import Checks
 from di.commands.utils import (
     CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting
 )
-from di.docker import get_agent_version, read_check_example_conf
+from di.docker import check_dir_start, get_agent_version, read_check_example_conf
 from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
 from di.utils import (
@@ -141,6 +141,14 @@ def start(check_name, flavor, instance_name, options, no_instance, direct,
     echo_success('Successfully wrote:')
     for file in files:
         echo_info('  {}'.format(file))
+
+    click.echo()
+    echo_waiting('Starting containers...')
+    error = check_dir_start(location)
+    if error:
+        echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
+        sys.exit(error)
+    echo_success('Success!')
 
     click.echo()
     if direct:
