@@ -1,4 +1,3 @@
-import os
 import subprocess
 from subprocess import PIPE
 
@@ -7,6 +6,27 @@ from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 # Must be a certain length
 __API_KEY = 'a' * 32
+
+
+def check_dir_start(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'up', '-d'], shell=NEED_SUBPROCESS_SHELL)
+
+    return process.returncode
+
+
+def check_dir_kill(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'kill'], shell=NEED_SUBPROCESS_SHELL)
+
+    return process.returncode
+
+
+def check_dir_active(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'top'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return not not process.stdout.decode().strip(), process.returncode
 
 
 def run_check(container, check, agent_version_major=None):
@@ -111,10 +131,3 @@ def container_running(container):
     ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return len(process.stdout.decode().strip().splitlines()) > 1, process.returncode
-
-
-def check_dir_active(d):
-    with chdir(d):
-        process = subprocess.run(['docker-compose', 'top'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
-
-    return not not process.stdout.decode().strip(), process.returncode
