@@ -6,7 +6,7 @@ import click
 
 from di.checks import Checks
 from di.commands.utils import (
-    UNKNOWN_OPTIONS, echo_failure, echo_info, echo_success, echo_waiting
+    CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting
 )
 from di.docker import get_agent_version, read_check_example_conf
 from di.settings import load_settings
@@ -17,7 +17,7 @@ from di.utils import (
 )
 
 
-@click.command(context_settings=UNKNOWN_OPTIONS,
+@click.command(context_settings=CONTEXT_SETTINGS,
                short_help='Starts a fully functioning integration')
 @click.argument('check_name')
 @click.argument('flavor', required=False, default=DEFAULT_NAME)
