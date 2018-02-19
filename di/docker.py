@@ -7,23 +7,23 @@ from di.utils import FAKE_API_KEY, NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 def check_dir_start(d):
     with chdir(d):
-        process = subprocess.run(['docker-compose', 'up', '-d'], shell=NEED_SUBPROCESS_SHELL)
+        process = subprocess.run(['docker-compose', 'up', '-d'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
-    return process.returncode
+    return process.stdout.decode() + process.stderr.decode(), process.returncode
 
 
 def check_dir_kill(d):
     with chdir(d):
-        process = subprocess.run(['docker-compose', 'kill'], shell=NEED_SUBPROCESS_SHELL)
+        process = subprocess.run(['docker-compose', 'kill'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
-    return process.returncode
+    return process.stdout.decode() + process.stderr.decode(), process.returncode
 
 
 def check_dir_active(d):
     with chdir(d):
         process = subprocess.run(['docker-compose', 'top'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
-    return not not process.stdout.decode().strip(), process.returncode
+    return not not process.stdout.decode().strip() + process.stderr.decode().strip(), process.returncode
 
 
 def run_check(container, check, agent_version_major=None):
