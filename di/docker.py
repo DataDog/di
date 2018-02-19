@@ -18,7 +18,7 @@ def run_check(container, check, agent_version_major=None):
         'docker', 'exec', container, exe_path, 'check', check
     ], shell=NEED_SUBPROCESS_SHELL)
 
-    return process.stdout.decode().strip(), process.returncode
+    return process.returncode
 
 
 def pip_install_mounted_check(container, check):
@@ -26,28 +26,34 @@ def pip_install_mounted_check(container, check):
         'docker', 'exec', container, 'pip', 'install', '-e', get_check_dir(check)
     ], shell=NEED_SUBPROCESS_SHELL)
 
-    return process.stdout.decode().strip(), process.returncode
+    return process.returncode
 
 
 def get_agent_version(image_or_container, running=False):
     if running:
-        version = subprocess.run([
-            'docker', 'exec', image_or_container, 'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        try:
+            version = subprocess.run([
+                'docker', 'exec', image_or_container, 'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
+            ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        except IndexError:
+            version = ''
 
         if not version.isdigit():
-            if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container, running=running):
+            if dir_exists('{}/disk'.format(A6_CONF_DIR), image_or_container, running=running):
                 version = '6'
             else:
                 version = '5'
     else:
-        version = subprocess.run([
-            'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
-            'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
-        ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        try:
+            version = subprocess.run([
+                'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
+                'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
+            ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
+        except IndexError:
+            version = ''
 
         if not version.isdigit():
-            if dir_exists(os.path.join(A6_CONF_DIR, 'disk'), image_or_container, running=running):
+            if dir_exists('{}/disk'.format(A6_CONF_DIR), image_or_container, running=running):
                 version = '6'
             else:
                 version = '5'
@@ -67,7 +73,7 @@ def dir_exists(d, image_or_container, running=False):
             'python', '-c', "import os;print(os.path.isdir('{d}'))".format(d=d)
         ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
-    return process.stdout.decode().strip(), process.returncode
+    return process.stdout.decode().strip() == 'True', process.returncode
 
 
 def read_file(path, image):
