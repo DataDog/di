@@ -2,10 +2,7 @@ import subprocess
 from subprocess import PIPE
 
 from di.agent import A6_CONF_DIR, get_agent_exe_path, get_conf_example_glob
-from di.utils import NEED_SUBPROCESS_SHELL, chdir, get_check_dir
-
-# Must be a certain length
-__API_KEY = 'a' * 32
+from di.utils import FAKE_API_KEY, NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 
 def check_dir_start(d):
@@ -66,7 +63,7 @@ def get_agent_version(image_or_container, running=False):
     else:
         try:
             version = subprocess.run([
-                'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
+                'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=FAKE_API_KEY), image_or_container,
                 'head', '--lines=1', '/opt/datadog-agent/version-manifest.txt'
             ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL).stdout.decode().strip().split()[-1][0]
         except IndexError:
@@ -89,7 +86,7 @@ def dir_exists(d, image_or_container, running=False):
         ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
     else:
         process = subprocess.run([
-            'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image_or_container,
+            'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=FAKE_API_KEY), image_or_container,
             'python', '-c', "import os;print(os.path.isdir('{d}'))".format(d=d)
         ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
@@ -98,7 +95,7 @@ def dir_exists(d, image_or_container, running=False):
 
 def read_file(path, image):
     process = subprocess.run([
-        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
+        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=FAKE_API_KEY), image, 'python', '-c',
         "import sys;sys.stdout.write(open('{path}', 'r').read())".format(path=path)
     ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
@@ -107,7 +104,7 @@ def read_file(path, image):
 
 def read_matching_glob(glob, image):
     process = subprocess.run([
-        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
+        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=FAKE_API_KEY), image, 'python', '-c',
         "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
     ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
@@ -118,7 +115,7 @@ def read_check_example_conf(check, image, agent_version_major=None):
     agent_version_major = agent_version_major or get_agent_version(image)
     glob = get_conf_example_glob(check, agent_version_major)
     process = subprocess.run([
-        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=__API_KEY), image, 'python', '-c',
+        'docker', 'run', '-e', 'DD_API_KEY={ak}'.format(ak=FAKE_API_KEY), image, 'python', '-c',
         "import glob,sys;sys.stdout.write(open(glob.glob('{glob}')[0], 'r').read())".format(glob=glob)
     ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 

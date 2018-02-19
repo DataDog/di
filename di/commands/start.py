@@ -6,14 +6,14 @@ import click
 
 from di.checks import Checks
 from di.commands.utils import (
-    CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting
+    CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting, echo_warning
 )
 from di.docker import check_dir_start, get_agent_version, read_check_example_conf
 from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
 from di.utils import (
     CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file,
-    read_file, remove_path, resolve_path
+    get_compose_api_key, read_file, remove_path, resolve_path
 )
 
 
@@ -64,8 +64,14 @@ def start(check_name, flavor, instance_name, options, no_instance, direct,
     options = OrderedDict(options)
     settings = load_settings()
 
+    user_api_key = api_key or settings.get('api_key', '${DD_API_KEY}')
+    api_key, evar = get_compose_api_key(user_api_key)
+    if api_key != user_api_key:
+        echo_warning(
+            "Environment variable {} doesn't; a well-formatted fake API key will be used instead.".format(evar)
+        )
+
     location = location or settings.get('location', CHECKS_DIR)
-    api_key = api_key or settings.get('api_key', '')
     prod = prod if prod is not None else settings.get('mode', 'prod') == 'prod'
     copy_conf = copy_conf if copy_conf is not None else settings.get('copy_conf', True)
 

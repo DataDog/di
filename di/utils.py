@@ -15,9 +15,19 @@ APP_DIR = user_data_dir('di-dev', '')
 CHECKS_DIR = os.path.join(APP_DIR, 'checks')
 DEFAULT_NAME = 'default'
 
+# Must be a certain length
+FAKE_API_KEY = 'a' * 32
+
 __platform = platform.system()
 ON_MACOS = os.name == 'mac' or __platform == 'Darwin'
 ON_WINDOWS = NEED_SUBPROCESS_SHELL = os.name == 'nt' or __platform == 'Windows'
+
+
+def get_compose_api_key(api_key):
+    evar = api_key[2:-1]
+    if api_key.startswith('${') and api_key.endswith('}') and evar not in os.environ:
+        api_key = FAKE_API_KEY
+    return api_key, evar
 
 
 def get_check_mount_dir():
