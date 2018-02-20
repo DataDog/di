@@ -12,9 +12,23 @@ def check_dir_start(d):
     return process.stdout.decode() + process.stderr.decode(), process.returncode
 
 
+def check_dir_stop(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'stop'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.stdout.decode() + process.stderr.decode(), process.returncode
+
+
 def check_dir_kill(d):
     with chdir(d):
         process = subprocess.run(['docker-compose', 'kill'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.stdout.decode() + process.stderr.decode(), process.returncode
+
+
+def check_dir_remove_containers(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'rm', '-f'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return process.stdout.decode() + process.stderr.decode(), process.returncode
 
