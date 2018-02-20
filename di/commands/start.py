@@ -177,12 +177,6 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
             ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
             ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
         ))
-    elif no_instance:
-        echo_info('To run this check, do `di check -ni {}{}{}`.'.format(
-            check_name,
-            ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
-            ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
-        ))
     else:
         echo_info('To run this check, do `di check {}{}{}`.'.format(
             check_name,
