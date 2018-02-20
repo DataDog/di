@@ -1,2 +1,3 @@
-from di.commands.config import config
-from di.commands.start import start
+from .check import check
+from .config import config
+from .start import start
