@@ -82,7 +82,8 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
     else:
         api_key = user_api_key
 
-    location = location or settings.get('location', CHECKS_DIR)
+    given_location = location
+    location = resolve_path(given_location or settings.get('location', CHECKS_DIR))
     prod = prod if prod is not None else settings.get('mode', 'prod') == 'prod'
     copy_conf = copy_conf if copy_conf is not None else settings.get('copy_conf', True)
 
@@ -114,7 +115,8 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
             sys.exit(1)
 
     if issubclass(check_class, DockerCheck):
-        image = image or settings.get('agent{}'.format(agent or settings.get('agent', '')), '')
+        agent_version = agent or settings.get('agent', '')
+        image = options.get('image') or image or settings.get('agent{}'.format(agent_version), '')
         options['image'] = image
         echo_info('Using docker image `{}`'.format(image))
         click.echo()
@@ -183,14 +185,8 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
 
     click.echo()
     if direct:
-        echo_info('To run this check, do `di check -d -l {} {}{}{}`.'.format(
-            location,
-            check_name,
-            ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
-            ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
-        ))
-    elif no_instance:
-        echo_info('To run this check, do `di check -ni {}{}{}`.'.format(
+        echo_info('To run this check, do `di check -d {}{}{}{}`.'.format(
+            '-l {} '.format(location) if given_location else '',
             check_name,
             ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
             ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
