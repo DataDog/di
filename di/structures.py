@@ -70,7 +70,7 @@ class DockerCheck(Check):
         )
 
         self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
-        self.container_name = self.get_container_name(instance_name)
+        self.container_name = self.get_container_name(instance_name, self.location, direct)
         self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
         self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
             conf_path_local=self.make_relative(self.conf_path_local),
@@ -88,8 +88,11 @@ class DockerCheck(Check):
         return 'agent_{name}_{flavor}'.format(name=cls.name, flavor=cls.flavor)
 
     @classmethod
-    def get_container_name(cls, instance_name=None):
-        return '{}_{}'.format(cls.get_container_prefix(), instance_name or DEFAULT_NAME)
+    def get_container_name(cls, instance_name=None, location=None, direct=False):
+        if location and direct:
+            return '{}_{}'.format(cls.get_container_prefix(), basepath(location).lower())
+        else:
+            return '{}_{}'.format(cls.get_container_prefix(), instance_name or DEFAULT_NAME)
 
 
 class VagrantCheck(Check):
