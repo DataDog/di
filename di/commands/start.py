@@ -8,11 +8,13 @@ from di.checks import Checks
 from di.commands.utils import (
     CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting, echo_warning
 )
-from di.docker import check_dir_start, get_agent_version, read_check_example_conf
+from di.docker import (
+    check_dir_start, get_agent_version, pip_install_mounted_check, read_check_example_conf
+)
 from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
 from di.utils import (
-    CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file,
+    CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file, get_check_dir,
     get_compose_api_key, read_file, remove_path, resolve_path
 )
 
@@ -168,11 +170,27 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
         echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
         sys.exit(error)
     echo_success('Success!')
+    click.echo()
+
+    if not prod:
+        echo_waiting('Upgrading `{}` check to the development version...'.format(check_name))
+        error = pip_install_mounted_check(check_class.container_name, check_name)
+        if error:
+            echo_warning(
+                'The development check mounted at `{}` may have not installed properly. '
+                'You might need to try it again yourself.'.format(get_check_dir(check_name))
+            )
 
     click.echo()
     if direct:
         echo_info('To run this check, do `di check -d -l {} {}{}{}`.'.format(
             location,
+            check_name,
+            ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
+            ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
+        ))
+    elif no_instance:
+        echo_info('To run this check, do `di check -ni {}{}{}`.'.format(
             check_name,
             ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
             ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
