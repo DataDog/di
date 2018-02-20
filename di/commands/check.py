@@ -9,12 +9,10 @@ from di.settings import load_settings
 from di.utils import CHECKS_DIR, DEFAULT_NAME
 
 
-@click.command(context_settings=CONTEXT_SETTINGS,
-               short_help='Runs a check')
+@click.command(context_settings=CONTEXT_SETTINGS, short_help='Runs a check')
 @click.argument('check_name')
 @click.argument('flavor', required=False, default=DEFAULT_NAME)
 @click.argument('instance_name', required=False, default=DEFAULT_NAME)
-@click.option('--no-instance', '-ni', is_flag=True)
 @click.option('--direct', '-d', is_flag=True)
 @click.option('--location', '-l', default='')
 def check(check_name, flavor, instance_name, no_instance, direct, location):
