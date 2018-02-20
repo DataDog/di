@@ -15,7 +15,7 @@ from di.utils import CHECKS_DIR, DEFAULT_NAME
 @click.argument('instance_name', required=False, default=DEFAULT_NAME)
 @click.option('--direct', '-d', is_flag=True)
 @click.option('--location', '-l', default='')
-def check(check_name, flavor, instance_name, no_instance, direct, location):
+def check(check_name, flavor, instance_name, direct, location):
     """Runs a check.
 
     \b
@@ -34,9 +34,11 @@ def check(check_name, flavor, instance_name, no_instance, direct, location):
     location = location or settings.get('location', CHECKS_DIR)
 
     location = check_class.get_location(
-        location, instance_name=instance_name, no_instance=no_instance, direct=direct
+        location, instance_name=instance_name, direct=direct
     )
-    container_name = check_class.get_container_name(instance_name=instance_name, location=location, direct=direct)
+    container_name = check_class.get_container_name(
+        instance_name=instance_name, location=location, direct=direct
+    )
 
     error = run_check(container_name, check_name)
     if error:

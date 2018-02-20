@@ -25,7 +25,6 @@ from di.utils import (
 @click.argument('flavor', required=False, default=DEFAULT_NAME)
 @click.argument('instance_name', required=False, default=DEFAULT_NAME)
 @click.option('--options', '-o', nargs=2, multiple=True)
-@click.option('--no-instance', '-ni', is_flag=True)
 @click.option('--direct', '-d', is_flag=True)
 @click.option('--location', '-l', default='')
 @click.option('--force', '-f', is_flag=True)
@@ -37,7 +36,7 @@ from di.utils import (
 @click.option('--extras', default='')
 @click.option('--agent', '-a', type=click.INT)
 @click.option('--image', '-i', default='')
-def start(check_name, flavor, instance_name, options, no_instance, direct, location, force,
+def start(check_name, flavor, instance_name, options, direct, location, force,
           api_key, ignore_missing, prod, copy_conf, core, extras, agent, image):
     """Starts a fully functioning integration.
 
@@ -142,7 +141,7 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
     check_class = check_class(
         d=location, api_key=api_key, conf_path=conf_path, conf_contents=conf_contents,
         agent_version=agent_version, check_dir=check_dir, instance_name=instance_name,
-        no_instance=no_instance, direct=direct, **options
+        direct=direct, **options
     )
     files = check_class.files.keys()
 
@@ -164,17 +163,17 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
         echo_info('  {}'.format(file))
 
     click.echo()
-    echo_waiting('Starting containers...')
+    echo_waiting('Starting containers... ', nl=False)
     output, error = check_dir_start(location)
     if error:
         click.echo()
         click.echo(output.rstrip())
         echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
         sys.exit(error)
-    echo_success('Success!')
-    click.echo()
+    echo_success('success!')
 
     if not prod:
+        click.echo()
         echo_waiting('Upgrading `{}` check to the development version...'.format(check_name))
         error = pip_install_mounted_check(check_class.container_name, check_name)
         if error:
@@ -183,17 +182,23 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
                 'You might need to try it again yourself.'.format(get_check_dir(check_name))
             )
 
+    # Show how to use it
     click.echo()
+    location_arg = '-l {} '.format(location) if given_location else ''
+    flavor_arg = ' {}'.format(flavor) if flavor != DEFAULT_NAME else ''
+    instance_arg = ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
+
     if direct:
         echo_info('To run this check, do `di check -d {}{}{}{}`.'.format(
-            '-l {} '.format(location) if given_location else '',
-            check_name,
-            ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
-            ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
+            location_arg, check_name, flavor_arg, instance_arg
+        ))
+        echo_info('To stop this check, do `di stop -d {}{}{}{}`.'.format(
+            location_arg, check_name, flavor_arg, instance_arg
         ))
     else:
         echo_info('To run this check, do `di check {}{}{}`.'.format(
-            check_name,
-            ' {}'.format(flavor) if flavor != DEFAULT_NAME else '',
-            ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
+            check_name, flavor_arg, instance_arg
+        ))
+        echo_info('To stop this check, do `di stop {}{}{}`.'.format(
+            check_name, flavor_arg, instance_arg
         ))
