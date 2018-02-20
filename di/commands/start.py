@@ -42,14 +42,19 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
     \b
     $ di start nginx
     Using docker image `datadog/agent-dev:master`
+
     Detecting the agent's major version...
     Agent 6 detected
     Reading the configuration file for `nginx`...
+
     Creating necessary files...
     Successfully wrote:
       C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\nginx.yaml
       C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\docker-compose.yaml
       C:\\Users\\Ofek\\AppData\\Local\\di-dev\\checks\\nginx\\stub\\default\\status.conf
+
+    Starting containers...
+    Success!
 
     To run this check, do `di check nginx`.
     """
@@ -110,6 +115,7 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
         image = image or settings.get('agent{}'.format(agent or settings.get('agent', '')), '')
         options['image'] = image
         echo_info('Using docker image `{}`'.format(image))
+        click.echo()
 
         echo_waiting("Detecting the agent's major version...")
         agent_version = get_agent_version(image)
@@ -145,6 +151,7 @@ def start(check_name, flavor, instance_name, options, no_instance, direct, locat
         else:
             sys.exit(2)
 
+    click.echo()
     echo_waiting('Creating necessary files...')
     check_class.write()
 
