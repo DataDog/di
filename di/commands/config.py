@@ -68,4 +68,4 @@ def set_value(key, value):
     save_settings(user_settings)
 
     echo_success('New setting:')
-    echo_info(toml.dumps(updated_settings))
+    echo_info(toml.dumps(updated_settings).rstrip())
