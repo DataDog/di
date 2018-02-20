@@ -27,10 +27,7 @@ def check_dir_active(d):
 
 
 def run_check(container, check, agent_version_major=None):
-    exe_path = (
-        get_agent_exe_path(agent_version_major) if agent_version_major
-        else get_agent_version(container, running=True)
-    )
+    exe_path = get_agent_exe_path(agent_version_major or get_agent_version(container, running=True))
     process = subprocess.run([
         'docker', 'exec', container, exe_path, 'check', check
     ], shell=NEED_SUBPROCESS_SHELL)
