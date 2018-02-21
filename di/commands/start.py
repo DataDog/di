@@ -172,7 +172,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
     click.echo()
     if isinstance(check_class, DockerCheck):
         echo_waiting('Starting containers... ', nl=False)
-        output, error = check_dir_start(location)
+        output, error = check_dir_start(location, build=check_class.requires_build)
         if error:
             click.echo()
             click.echo(output.rstrip())

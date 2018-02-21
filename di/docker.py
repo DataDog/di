@@ -5,9 +5,13 @@ from di.agent import A6_CONF_DIR, get_agent_exe_path, get_conf_example_glob
 from di.utils import FAKE_API_KEY, NEED_SUBPROCESS_SHELL, chdir, get_check_dir
 
 
-def check_dir_start(d):
+def check_dir_start(d, build=False):
+    command = ['docker-compose', 'up', '-d']
+    if build:
+        command.append('--build')
+
     with chdir(d):
-        process = subprocess.run(['docker-compose', 'up', '-d'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+        process = subprocess.run(command, stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return process.stdout.decode() + process.stderr.decode(), process.returncode
 

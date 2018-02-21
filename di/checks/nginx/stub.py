@@ -50,6 +50,7 @@ server {
 class NginxStub(DockerCheck):
     name = 'nginx'
     flavor = 'stub'
+    requires_build = False
 
     def __init__(self, d, api_key, conf_path, conf_contents, agent_version, check_dir=None,
                  instance_name=None, no_instance=False, direct=False, **options):

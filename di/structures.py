@@ -63,6 +63,8 @@ class Check:
 
 
 class DockerCheck(Check):
+    requires_build = False
+
     def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
                  instance_name=None, no_instance=False, direct=False, **options):
         self.image = options.pop('image', '')
