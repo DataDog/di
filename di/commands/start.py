@@ -127,6 +127,12 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         if prod:
             echo_waiting('Reading the configuration file for `{}`...'.format(check_name))
             conf_contents, error = read_check_example_conf(check_name, image, agent_version)
+            if error:
+                echo_failure(
+                    'Unable to locate a configuration file. If this '
+                    'is a new check, please use the --dev flag.'
+                )
+                sys.exit(1)
         else:
             conf_contents = read_file(conf_path)
             if copy_conf:
@@ -163,24 +169,31 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         echo_info('  {}'.format(file))
 
     click.echo()
-    echo_waiting('Starting containers... ', nl=False)
-    output, error = check_dir_start(location)
-    if error:
-        click.echo()
-        click.echo(output.rstrip())
-        echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
-        sys.exit(error)
-    echo_success('success!')
-
-    if not prod:
-        click.echo()
-        echo_waiting('Upgrading `{}` check to the development version...'.format(check_name))
-        error = pip_install_mounted_check(check_class.container_name, check_name)
+    if isinstance(check_class, DockerCheck):
+        echo_waiting('Starting containers... ', nl=False)
+        output, error = check_dir_start(location)
         if error:
-            echo_warning(
-                'The development check mounted at `{}` may have not installed properly. '
-                'You might need to try it again yourself.'.format(get_check_dir(check_name))
-            )
+            click.echo()
+            click.echo(output.rstrip())
+            echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
+            sys.exit(error)
+        echo_success('success!')
+
+        if not prod:
+            click.echo()
+            echo_waiting('Upgrading `{}` check to the development version...'.format(check_name))
+            error = pip_install_mounted_check(check_class.container_name, check_name)
+            if error:
+                echo_warning(
+                    'The development check mounted at `{}` may have not installed properly. '
+                    'You might need to try it again yourself.'.format(get_check_dir(check_name))
+                )
+    elif isinstance(check_class, VagrantCheck):
+        echo_failure('Vagrant checks are currently unsupported, "check" back soon!')
+        sys.exit(1)
+    else:
+        echo_failure('Local checks are currently unsupported, "check" back soon!')
+        sys.exit(1)
 
     # Show how to use it
     click.echo()
