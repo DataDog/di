@@ -14,10 +14,13 @@ class File:
         self.contents = contents
         self.write_mode = 'wb' if binary else 'w'
 
+        # Docker on Windows needs any imported scripts to have unix line endings.
+        self.newline = '\n' if self.file_path.endswith('.sh') else None
+
     def write(self):
         ensure_parent_dir_exists(self.file_path)
 
-        with open(self.file_path, self.write_mode) as f:
+        with open(self.file_path, self.write_mode, newline=self.newline) as f:
             if isinstance(self.contents, str):
                 f.write(self.contents)
             else:
