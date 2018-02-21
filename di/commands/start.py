@@ -123,6 +123,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         echo_waiting("Detecting the agent's major version...")
         agent_version = get_agent_version(image)
         echo_info('Agent {} detected'.format(agent_version))
+        click.echo()
 
         if prod:
             echo_waiting('Reading the configuration file for `{}`...'.format(check_name))
