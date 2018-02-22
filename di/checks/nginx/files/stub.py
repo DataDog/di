@@ -16,8 +16,6 @@ services:
     volumes:
       {conf_mount}
       {check_mount}
-    links:
-      - nginx
 """
 
 STATUS_CONF = """\
