@@ -16,10 +16,10 @@ class NginxStub(DockerCheck):
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 
-        status_path = self.locate_file('status.conf')
-
         # Correct domain; localhost is per container
         conf_contents = conf_contents.replace('localhost', 'nginx:81', 1)
+
+        status_path = self.locate_file('status.conf')
 
         self.files.update({
             self.conf_path_local: File(
