@@ -3,7 +3,9 @@ import sys
 import click
 
 from di.checks import Checks
-from di.commands.utils import CONTEXT_SETTINGS, echo_failure, echo_success, echo_waiting
+from di.commands.utils import (
+    CONTEXT_SETTINGS, echo_failure, echo_success, echo_waiting, echo_warning
+)
 from di.docker import check_dir_remove_containers, check_dir_stop
 from di.settings import load_settings
 from di.utils import CHECKS_DIR, DEFAULT_NAME
@@ -41,7 +43,14 @@ def stop(check_name, flavor, instance_name, remove, direct, location):
     )
 
     echo_waiting('Stopping containers... ', nl=False)
-    output, error = check_dir_stop(location)
+
+    try:
+        output, error = check_dir_stop(location)
+    except FileNotFoundError:
+        click.echo()
+        echo_warning('Location `{}` already does not exist.'.format(location))
+        sys.exit()
+
     if error:
         click.echo()
         click.echo(output.rstrip())
