@@ -16,7 +16,7 @@ class NginxStub(DockerCheck):
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 
-        status_path = os.path.join(self.location, 'status.conf')
+        status_path = self.locate_file('status.conf')
 
         # Correct domain; localhost is per container
         conf_contents = conf_contents.replace('localhost', 'nginx:81', 1)
@@ -28,14 +28,7 @@ class NginxStub(DockerCheck):
             ),
             self.compose_path: File(
                 self.compose_path,
-                COMPOSE_YAML.format(
-                    image=self.image,
-                    api_key=self.api_key,
-                    container_name=self.container_name,
-                    conf_mount=self.conf_mount,
-                    check_mount=self.check_mount,
-                    **self.options
-                )
+                self.format_compose_file(COMPOSE_YAML)
             ),
             status_path: File(
                 status_path,

@@ -52,6 +52,9 @@ class Check:
         else:
             return os.path.join(d, cls.name, cls.flavor, '{}'.format(instance_name or DEFAULT_NAME))
 
+    def locate_file(self, filename):
+        return os.path.join(self.location, filename)
+
     def make_relative(self, path):
         if resolve_path(os.path.dirname(path)) == resolve_path(self.location):
             path = './{}'.format(basepath(path))
@@ -98,6 +101,16 @@ class DockerCheck(Check):
             return '{}_{}'.format(cls.get_container_prefix(), basepath(location).lower())
         else:
             return '{}_{}'.format(cls.get_container_prefix(), instance_name or DEFAULT_NAME)
+
+    def format_compose_file(self, compose_file):
+        return compose_file.format(
+            image=self.image,
+            api_key=self.api_key,
+            container_name=self.container_name,
+            conf_mount=self.conf_mount,
+            check_mount=self.check_mount,
+            **self.options
+        )
 
 
 class VagrantCheck(Check):
