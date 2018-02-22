@@ -1,5 +1,3 @@
-import os
-
 from di.structures import DockerCheck, File
 from .files.stub import COMPOSE_YAML, STATUS_CONF
 
