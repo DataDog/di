@@ -82,7 +82,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         api_key = user_api_key
 
     given_location = location
-    location = resolve_path(given_location or settings.get('location', CHECKS_DIR))
+    location = given_location or settings.get('location', CHECKS_DIR)
     prod = prod if prod is not None else settings.get('mode', 'prod') == 'prod'
     copy_conf = copy_conf if copy_conf is not None else settings.get('copy_conf', True)
 

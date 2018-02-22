@@ -45,6 +45,8 @@ class Check:
 
     @classmethod
     def get_location(cls, d, instance_name=None, no_instance=False, direct=False):
+        d = resolve_path(d)
+
         if direct:
             return d
         elif no_instance:
@@ -56,7 +58,7 @@ class Check:
         return os.path.join(self.location, filename)
 
     def make_relative(self, path):
-        if resolve_path(os.path.dirname(path)) == resolve_path(self.location):
+        if os.path.dirname(resolve_path(path)) == self.location:
             path = './{}'.format(basepath(path))
         return path
 
