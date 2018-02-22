@@ -125,10 +125,11 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         echo_info('Agent {} detected'.format(agent_version))
         click.echo()
 
+        echo_waiting('Reading the configuration file for `{}`... '.format(check_name), nl=False)
         if prod:
-            echo_waiting('Reading the configuration file for `{}`...'.format(check_name))
             conf_contents, error = read_check_example_conf(check_name, image, agent_version)
             if error:
+                click.echo()
                 echo_failure(
                     'Unable to locate a configuration file. If this '
                     'is a new check, please use the --dev flag.'
@@ -138,6 +139,8 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
             conf_contents = read_file(conf_path)
             if copy_conf:
                 conf_path = ''
+        echo_success('success!')
+
     elif issubclass(check_class, VagrantCheck):
         echo_failure('Vagrant checks are currently unsupported, "check" back soon!')
         sys.exit(1)
