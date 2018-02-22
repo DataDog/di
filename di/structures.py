@@ -81,7 +81,7 @@ class DockerCheck(Check):
 
         self.api_key = '- DD_API_KEY={api_key}'.format(api_key=api_key)
         self.container_name = self.get_container_name(instance_name, self.location, direct)
-        self.compose_path = os.path.join(self.location, 'docker-compose.yaml')
+        self.compose_path = self.locate_file('docker-compose.yaml')
         self.conf_mount = '- {conf_path_local}:{conf_path_mount}'.format(
             conf_path_local=self.make_relative(self.conf_path_local),
             conf_path_mount=self.conf_path_mount
