@@ -5,7 +5,7 @@ services:
   nginx:
     image: nginx:{version}
     volumes:
-        - {status_path}:/etc/nginx/conf.d/status.conf
+        - ./status.conf:/etc/nginx/conf.d/status.conf
 
   agent:
     image: {image}

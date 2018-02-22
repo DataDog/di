@@ -29,7 +29,6 @@ class NginxStub(DockerCheck):
             self.compose_path: File(
                 self.compose_path,
                 COMPOSE_YAML.format(
-                    status_path=self.make_relative(status_path),
                     image=self.image,
                     api_key=self.api_key,
                     container_name=self.container_name,
