@@ -2,21 +2,22 @@ COMPOSE_YAML = """\
 version: '3'
 
 services:
+
   nginx:
     image: nginx:{version}
     volumes:
-        - ./status.conf:/etc/nginx/conf.d/status.conf
+      - ./status.conf:/etc/nginx/conf.d/status.conf
 
   agent:
     image: {image}
     container_name: {container_name}
     environment:
-        {api_key}
+      {api_key}
     volumes:
-        {conf_mount}
-        {check_mount}
+      {conf_mount}
+      {check_mount}
     links:
-        - nginx
+      - nginx
 """
 
 STATUS_CONF = """\
