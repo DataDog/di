@@ -24,6 +24,13 @@ APP_SETTINGS = OrderedDict([
 ])
 
 CHECK_SETTINGS = OrderedDict([
+    ('envoy', OrderedDict([
+        ('version', OrderedDict([
+            (DEFAULT_NAME, 'latest'),
+            ('info', 'The envoyproxy/envoy Docker image tag.'),
+            ('supported_flavors', ('front', )),
+        ])),
+    ])),
     ('nginx', OrderedDict([
         ('version', OrderedDict([
             (DEFAULT_NAME, 'latest'),
