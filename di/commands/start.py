@@ -202,8 +202,8 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
     # Show how to use it
     click.echo()
     location_arg = '-l {} '.format(location) if given_location else ''
-    flavor_arg = ' {}'.format(flavor) if flavor != DEFAULT_NAME else ''
     instance_arg = ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
+    flavor_arg = ' {}'.format(flavor) if flavor != DEFAULT_NAME or instance_arg else ''
 
     if direct:
         echo_info('To run this check, do `di check -d {}{}{}{}`.'.format(
