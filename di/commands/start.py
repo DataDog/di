@@ -16,7 +16,7 @@ from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
 from di.utils import (
     CHECKS_BASE_PACKAGE, CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file,
-    get_check_dir, get_compose_api_key, read_file, remove_path, resolve_path
+    get_check_mount_dir, get_compose_api_key, read_file, remove_path, resolve_path
 )
 
 
@@ -201,7 +201,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
             if error:
                 echo_warning(
                     'The development check mounted at `{}` may have not installed properly. '
-                    'You might need to try it again yourself.'.format(get_check_dir(check_name))
+                    'You might need to try it again yourself.'.format(get_check_mount_dir(check_name))
                 )
 
             click.echo()

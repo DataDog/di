@@ -15,6 +15,7 @@ APP_DIR = user_data_dir('di-dev', '')
 CHECKS_BASE_PACKAGE = 'datadog-checks-base'
 CHECKS_DIR = os.path.join(APP_DIR, 'checks')
 DEFAULT_NAME = 'default'
+MOUNT_DIR = '/home'
 
 # Must be a certain length
 FAKE_API_KEY = 'a' * 32
@@ -31,12 +32,8 @@ def get_compose_api_key(api_key):
     return api_key, evar
 
 
-def get_check_mount_dir():
-    return '/home'
-
-
-def get_check_dir(check):
-    return '{}/{}'.format(get_check_mount_dir(), check)
+def get_check_mount_dir(check):
+    return '{}/{}'.format(MOUNT_DIR, check)
 
 
 def copy_dict_merge(d1, d2):

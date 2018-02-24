@@ -2,7 +2,7 @@ import subprocess
 from subprocess import PIPE
 
 from di.agent import A6_CONF_DIR, get_agent_exe_path, get_conf_example_glob
-from di.utils import FAKE_API_KEY, NEED_SUBPROCESS_SHELL, chdir, get_check_dir
+from di.utils import FAKE_API_KEY, NEED_SUBPROCESS_SHELL, chdir, get_check_mount_dir
 
 
 def check_dir_start(d, build=False):
@@ -55,7 +55,7 @@ def run_check(container, check, agent_version_major=None):
 
 def test_check(container, check, full=False):
     command = [
-        'docker', 'exec', '--workdir', get_check_dir(check), container, 'tox', '--alwayscopy'
+        'docker', 'exec', '--workdir', get_check_mount_dir(check), container, 'tox', '--alwayscopy'
     ]
     if not full:
         command.extend(['-e', check])
@@ -67,7 +67,7 @@ def test_check(container, check, full=False):
 
 def pip_install_mounted_check(container, check):
     process = subprocess.run([
-        'docker', 'exec', container, 'pip', 'install', '-e', get_check_dir(check)
+        'docker', 'exec', container, 'pip', 'install', '-e', get_check_mount_dir(check)
     ], shell=NEED_SUBPROCESS_SHELL)
 
     return process.returncode

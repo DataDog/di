@@ -4,7 +4,7 @@ from di.agent import get_conf_path
 from di.settings import copy_check_defaults
 from di.utils import (
     CHECKS_BASE_PACKAGE, DEFAULT_NAME, basepath, dict_merge, ensure_parent_dir_exists,
-    get_check_dir, resolve_path
+    get_check_mount_dir, resolve_path
 )
 
 
@@ -45,9 +45,9 @@ class Check:
             check_dir, base_dir = '', ''
 
         self.check_dir_local = check_dir
-        self.check_dir_mount = get_check_dir(self.name)
+        self.check_dir_mount = get_check_mount_dir(self.name)
         self.base_dir_local = base_dir
-        self.base_dir_mount = get_check_dir(CHECKS_BASE_PACKAGE)
+        self.base_dir_mount = get_check_mount_dir(CHECKS_BASE_PACKAGE)
 
         self.options = dict_merge(copy_check_defaults(self.name), options)
         self.files = {}
