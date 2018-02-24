@@ -40,7 +40,12 @@ def check(check_name, flavor, instance_name, direct, location):
         instance_name=instance_name, location=location, direct=direct
     )
 
-    error = run_check(container_name, check_name)
+    try:
+        error = run_check(container_name, check_name)
+    except FileNotFoundError:
+        echo_failure('Location `{}` does not exist.'.format(location))
+        sys.exit(1)
+
     if error:
         echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
         sys.exit(error)
