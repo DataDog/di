@@ -16,6 +16,7 @@ services:
     volumes:
       {conf_mount}
       {check_mount}
+      {base_mount}
 """
 
 STATUS_CONF = """\

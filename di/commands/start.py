@@ -9,13 +9,14 @@ from di.commands.utils import (
     CONTEXT_SETTINGS, echo_failure, echo_info, echo_success, echo_waiting, echo_warning
 )
 from di.docker import (
-    check_dir_start, get_agent_version, pip_install_mounted_check, read_check_example_conf
+    check_dir_start, get_agent_version, pip_install_dev_deps,
+    pip_install_mounted_check, read_check_example_conf
 )
 from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
 from di.utils import (
-    CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file, get_check_dir,
-    get_compose_api_key, read_file, remove_path, resolve_path
+    CHECKS_BASE_PACKAGE, CHECKS_DIR, DEFAULT_NAME, dir_exists, file_exists, find_matching_file,
+    get_check_dir, get_compose_api_key, read_file, remove_path, resolve_path
 )
 
 
@@ -87,13 +88,21 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
     copy_conf = copy_conf if copy_conf is not None else settings.get('copy_conf', True)
 
     if prod:
-        check_dir = None
         conf_path = ''
+        check_dirs = None
     else:
-        core = core or settings.get('core', '')
-        extras = extras or settings.get('extras', '')
-        core_check_dir = os.path.join(resolve_path(core), check_name)
-        extras_check_dir = os.path.join(resolve_path(extras), check_name)
+        core = resolve_path(core or settings.get('core', ''))
+        extras = resolve_path(extras or settings.get('extras', ''))
+
+        if not dir_exists(core):
+            echo_failure(
+                'All checks running in dev mode require `integrations-core` '
+                'for its {} dependency.'.format(CHECKS_BASE_PACKAGE)
+            )
+            sys.exit(1)
+
+        core_check_dir = os.path.join(core, check_name)
+        extras_check_dir = os.path.join(extras, check_name)
 
         if dir_exists(core_check_dir):
             check_dir = core_check_dir
@@ -112,6 +121,8 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         if not conf_path:
             echo_failure('No `conf.yaml*` detected.')
             sys.exit(1)
+
+        check_dirs = check_dir, os.path.join(core, CHECKS_BASE_PACKAGE)
 
     if issubclass(check_class, DockerCheck):
         agent_version = agent or settings.get('agent', '')
@@ -150,7 +161,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
 
     check_class = check_class(
         d=location, api_key=api_key, conf_path=conf_path, conf_contents=conf_contents,
-        agent_version=agent_version, check_dir=check_dir, instance_name=instance_name,
+        agent_version=agent_version, check_dirs=check_dirs, instance_name=instance_name,
         direct=direct, **options
     )
     files = check_class.files.keys()
@@ -191,6 +202,15 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
                 echo_warning(
                     'The development check mounted at `{}` may have not installed properly. '
                     'You might need to try it again yourself.'.format(get_check_dir(check_name))
+                )
+
+            click.echo()
+            echo_waiting('Installing development dependencies...')
+            error = pip_install_dev_deps(check_class.container_name)
+            if error:
+                echo_warning(
+                    'The development dependencies may have not installed properly. '
+                    'You might need to try installing them again yourself.'
                 )
     elif isinstance(check_class, VagrantCheck):
         echo_failure('Vagrant checks are currently unsupported, "check" back soon!')

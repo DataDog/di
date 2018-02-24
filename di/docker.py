@@ -53,9 +53,29 @@ def run_check(container, check, agent_version_major=None):
     return process.returncode
 
 
+def test_check(container, check, full=False):
+    command = [
+        'docker', 'exec', '--workdir', get_check_dir(check), container, 'tox', '--alwayscopy'
+    ]
+    if not full:
+        command.extend(['-e', check])
+
+    process = subprocess.run(command, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.returncode
+
+
 def pip_install_mounted_check(container, check):
     process = subprocess.run([
         'docker', 'exec', container, 'pip', 'install', '-e', get_check_dir(check)
+    ], shell=NEED_SUBPROCESS_SHELL)
+
+    return process.returncode
+
+
+def pip_install_dev_deps(container):
+    process = subprocess.run([
+        'docker', 'exec', container, 'pip', 'install', 'pytest', 'tox'
     ], shell=NEED_SUBPROCESS_SHELL)
 
     return process.returncode

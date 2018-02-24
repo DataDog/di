@@ -10,10 +10,10 @@ class EnvoyFront(DockerCheck):
     flavor = 'front'
     requires_build = True
 
-    def __init__(self, d, api_key, conf_path, conf_contents, agent_version, check_dir=None,
+    def __init__(self, d, api_key, conf_path, conf_contents, agent_version, check_dirs=None,
                  instance_name=None, no_instance=False, direct=False, **options):
         super().__init__(
-            d=d, api_key=api_key, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
+            d=d, api_key=api_key, conf_path=conf_path, agent_version=agent_version, check_dirs=check_dirs,
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 

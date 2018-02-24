@@ -3,7 +3,7 @@ import os
 from di.agent import get_conf_path
 from di.settings import copy_check_defaults
 from di.utils import (
-    DEFAULT_NAME, basepath, dict_merge, ensure_parent_dir_exists,
+    CHECKS_BASE_PACKAGE, DEFAULT_NAME, basepath, dict_merge, ensure_parent_dir_exists,
     get_check_dir, resolve_path
 )
 
@@ -31,15 +31,24 @@ class Check:
     name = 'check'
     flavor = DEFAULT_NAME
 
-    def __init__(self, d, conf_path, agent_version, check_dir=None,
+    def __init__(self, d, conf_path, agent_version, check_dirs=None,
                  instance_name=None, no_instance=False, direct=False, **options):
         self.location = self.get_location(d, instance_name, no_instance, direct)
         self.conf_path_local = conf_path or os.path.join(
             self.location, '{name}.yaml'.format(name=self.name)
         )
         self.conf_path_mount = get_conf_path(self.name, agent_version)
-        self.check_dir_local = check_dir or ''
+
+        if check_dirs:
+            check_dir, base_dir = check_dirs
+        else:
+            check_dir, base_dir = '', ''
+
+        self.check_dir_local = check_dir
         self.check_dir_mount = get_check_dir(self.name)
+        self.base_dir_local = base_dir
+        self.base_dir_mount = get_check_dir(CHECKS_BASE_PACKAGE)
+
         self.options = dict_merge(copy_check_defaults(self.name), options)
         self.files = {}
 
@@ -70,12 +79,12 @@ class Check:
 class DockerCheck(Check):
     requires_build = False
 
-    def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
+    def __init__(self, d, api_key, conf_path, agent_version, check_dirs=None,
                  instance_name=None, no_instance=False, direct=False, **options):
         self.image = options.pop('image', '')
 
         super().__init__(
-            d=d, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
+            d=d, conf_path=conf_path, agent_version=agent_version, check_dirs=check_dirs,
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 
@@ -90,6 +99,12 @@ class DockerCheck(Check):
             '- {check_dir_local}:{check_dir_mount}'.format(
                 check_dir_local=self.make_relative(self.check_dir_local),
                 check_dir_mount=self.check_dir_mount
+            )
+        )
+        self.base_mount = '' if not self.base_dir_local else (
+            '- {base_dir_local}:{base_dir_mount}'.format(
+                base_dir_local=self.make_relative(self.base_dir_local),
+                base_dir_mount=self.base_dir_mount
             )
         )
 
@@ -111,15 +126,16 @@ class DockerCheck(Check):
             container_name=self.container_name,
             conf_mount=self.conf_mount,
             check_mount=self.check_mount,
+            base_mount=self.base_mount,
             **self.options
         )
 
 
 class VagrantCheck(Check):
-    def __init__(self, d, api_key, conf_path, agent_version, check_dir=None,
+    def __init__(self, d, api_key, conf_path, agent_version, check_dirs=None,
                  instance_name=None, no_instance=False, direct=False, **options):
         super().__init__(
-            d=d, conf_path=conf_path, agent_version=agent_version, check_dir=check_dir,
+            d=d, conf_path=conf_path, agent_version=agent_version, check_dirs=check_dirs,
             instance_name=instance_name, no_instance=no_instance, direct=direct, **options
         )
 

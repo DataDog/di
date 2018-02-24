@@ -12,6 +12,7 @@ from urllib.request import urlopen
 from appdirs import user_data_dir
 
 APP_DIR = user_data_dir('di-dev', '')
+CHECKS_BASE_PACKAGE = 'datadog-checks-base'
 CHECKS_DIR = os.path.join(APP_DIR, 'checks')
 DEFAULT_NAME = 'default'
 

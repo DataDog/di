@@ -56,6 +56,7 @@ services:
     volumes:
       {conf_mount}
       {check_mount}
+      {base_mount}
     networks:
       - envoymesh
 
