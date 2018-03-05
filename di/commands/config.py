@@ -21,7 +21,7 @@ def config(ctx, update, restore):
 
     \b
     $ di config
-    Settings location: /home/ofek/.local/share/di-dev/settings.toml
+    /home/ofek/.local/share/di-dev/settings.toml
     """
     if update:
         update_settings()
@@ -32,7 +32,9 @@ def config(ctx, update, restore):
         echo_success('Settings were successfully restored.')
 
     if not ctx.invoked_subcommand:
-        echo_info('Settings location: ' + SETTINGS_FILE)
+        if update or restore:
+            echo_info('Settings location: ', nl=False)
+        echo_info(SETTINGS_FILE)
 
 
 @config.command('set', context_settings=CONTEXT_SETTINGS,
