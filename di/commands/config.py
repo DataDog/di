@@ -33,8 +33,9 @@ def config(ctx, update, restore):
 
     if not ctx.invoked_subcommand:
         if update or restore:
-            echo_info('Settings location: ', nl=False)
-        echo_info(SETTINGS_FILE)
+            echo_info('Settings location: `{}`'.format(SETTINGS_FILE))
+        else:
+            echo_info('"{}"'.format(SETTINGS_FILE))
 
 
 @config.command('set', context_settings=CONTEXT_SETTINGS,
