@@ -163,3 +163,11 @@ def container_running(container):
     ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
 
     return len(process.stdout.decode().strip().splitlines()) > 1, process.returncode
+
+
+def update_image(image):
+    process = subprocess.run([
+        'docker', 'pull', image
+    ], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.stdout.decode(), process.returncode

@@ -10,7 +10,7 @@ from di.commands.utils import (
 )
 from di.docker import (
     check_dir_start, get_agent_version, pip_install_dev_deps,
-    pip_install_mounted_check, read_check_example_conf
+    pip_install_mounted_check, read_check_example_conf, update_image
 )
 from di.settings import load_settings
 from di.structures import DockerCheck, VagrantCheck
@@ -37,8 +37,9 @@ from di.utils import (
 @click.option('--extras', default='')
 @click.option('--agent', '-a', type=click.INT)
 @click.option('--image', '-i', default='')
-def start(check_name, flavor, instance_name, options, direct, location, force,
-          api_key, ignore_missing, prod, copy_conf, core, extras, agent, image):
+@click.option('--no-pull', '-np', is_flag=True)
+def start(check_name, flavor, instance_name, options, direct, location, force, api_key,
+          ignore_missing, prod, copy_conf, core, extras, agent, image, no_pull):
     """Starts a fully functioning integration.
 
     \b
@@ -79,6 +80,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
             "Environment variable {} doesn't exist; a well-formatted "
             "fake API key will be used instead.".format(evar)
         )
+        click.echo()
     else:
         api_key = user_api_key
 
@@ -129,8 +131,21 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
         image = options.get('image') or image or settings.get('agent{}'.format(agent_version), '')
         options['image'] = image
         echo_info('Using docker image `{}`'.format(image))
-        click.echo()
 
+        if not no_pull:
+            echo_waiting('Pulling the latest version... ', nl=False)
+            output, error = update_image(image)
+            if error:
+                click.echo()
+                click.echo(output.rstrip())
+                echo_failure(
+                    'Unable to pull image `{}`. An unexpected Docker error '
+                    '(status {}) has occurred.'.format(image, error)
+                )
+                sys.exit(error)
+            echo_success('success!')
+
+        click.echo()
         echo_waiting("Detecting the agent's major version...")
         agent_version = get_agent_version(image)
         echo_info('Agent {} detected'.format(agent_version))
