@@ -35,13 +35,13 @@ Python 3.5+ and PyPy.
 
 .. code-block:: bash
 
-    $ pip3 install di
+    $ pip3 install -U di
 
 If you'd like to use the master branch instead, do:
 
 .. code-block:: bash
 
-    $ pip3 install https://github.com/DataDog/di/archive/master.tar.gz
+    $ pip3 install -U https://github.com/DataDog/di/archive/master.tar.gz
 
 You **must** have `Docker <https://docs.docker.com/install>`_ installed.
 
