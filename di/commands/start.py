@@ -237,6 +237,10 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
     flavor_arg = ' {}'.format(flavor) if flavor != DEFAULT_NAME or instance_arg else ''
 
     if direct:
+        if not prod:
+            echo_info('To test this check, do `di test -d {}{}{}{}`.'.format(
+                location_arg, check_name, flavor_arg, instance_arg
+            ))
         echo_info('To run this check, do `di check -d {}{}{}{}`.'.format(
             location_arg, check_name, flavor_arg, instance_arg
         ))
@@ -244,6 +248,10 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
             location_arg, check_name, flavor_arg, instance_arg
         ))
     else:
+        if not prod:
+            echo_info('To test this check, do `di test {}{}{}`.'.format(
+                check_name, flavor_arg, instance_arg
+            ))
         echo_info('To run this check, do `di check {}{}{}`.'.format(
             check_name, flavor_arg, instance_arg
         ))
