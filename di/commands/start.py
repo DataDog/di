@@ -221,6 +221,17 @@ def start(check_name, flavor, instance_name, options, direct, location, force,
 
     # Show how to use it
     click.echo()
+
+    echo_info('Location: `{}`'.format(check_class.location))
+    if isinstance(check_class, DockerCheck):
+        echo_info('Container name: `{}`'.format(check_class.container_name))
+    elif isinstance(check_class, VagrantCheck):
+        echo_failure('Vagrant checks are currently unsupported, "check" back soon!')
+        sys.exit(1)
+    else:
+        echo_failure('Local checks are currently unsupported, "check" back soon!')
+        sys.exit(1)
+
     location_arg = '-l {} '.format(location) if given_location else ''
     instance_arg = ' {}'.format(instance_name) if instance_name != DEFAULT_NAME else ''
     flavor_arg = ' {}'.format(flavor) if flavor != DEFAULT_NAME or instance_arg else ''
