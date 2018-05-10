@@ -16,6 +16,13 @@ def check_dir_start(d, build=False):
     return process.stdout.decode() + process.stderr.decode(), process.returncode
 
 
+def check_dir_down(d):
+    with chdir(d):
+        process = subprocess.run(['docker-compose', 'down'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)
+
+    return process.stdout.decode() + process.stderr.decode(), process.returncode
+
+
 def check_dir_stop(d):
     with chdir(d):
         process = subprocess.run(['docker-compose', 'stop'], stdout=PIPE, stderr=PIPE, shell=NEED_SUBPROCESS_SHELL)

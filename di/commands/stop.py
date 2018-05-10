@@ -6,7 +6,7 @@ from di.checks import Checks
 from di.commands.utils import (
     CONTEXT_SETTINGS, echo_failure, echo_success, echo_waiting, echo_warning
 )
-from di.docker import check_dir_remove_containers, check_dir_stop
+from di.docker import check_dir_down
 from di.settings import load_settings
 from di.utils import CHECKS_DIR, DEFAULT_NAME
 
@@ -45,7 +45,7 @@ def stop(check_name, flavor, instance_name, remove, direct, location):
     echo_waiting('Stopping containers... ', nl=False)
 
     try:
-        output, error = check_dir_stop(location)
+        output, error = check_dir_down(location)
     except FileNotFoundError:
         click.echo()
         echo_warning('Location `{}` already does not exist.'.format(location))
@@ -57,13 +57,3 @@ def stop(check_name, flavor, instance_name, remove, direct, location):
         echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
         sys.exit(error)
     echo_success('success!')
-
-    if remove:
-        echo_waiting('Removing containers... ', nl=False)
-        output, error = check_dir_remove_containers(location)
-        if error:
-            click.echo()
-            click.echo(output.rstrip())
-            echo_failure('An unexpected Docker error (status {}) has occurred.'.format(error))
-            sys.exit(error)
-        echo_success('success!')
