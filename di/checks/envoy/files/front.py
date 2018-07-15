@@ -187,7 +187,7 @@ admin:
 """
 
 START_SERVICE_SCRIPT = """\
-#!/usr/bin/env bash
+#!/bin/sh
 python3 /code/service.py &
 envoy -c /etc/service-envoy.yaml --service-cluster service${SERVICE_NAME}
 """
@@ -205,18 +205,23 @@ app = Flask(__name__)
 TRACE_HEADERS_TO_PROPAGATE = [
     'X-Ot-Span-Context',
     'X-Request-Id',
+
+    # Zipkin headers
     'X-B3-TraceId',
     'X-B3-SpanId',
     'X-B3-ParentSpanId',
     'X-B3-Sampled',
-    'X-B3-Flags'
+    'X-B3-Flags',
+
+    # Jaeger header (for native client)
+    'uber-trace-id'
 ]
 
 
 @app.route('/service/<service_number>')
 def hello(service_number):
     return ('Hello from behind Envoy (service {})! hostname: {} resolved'
-            'hostname: {}\n'.format(os.environ['SERVICE_NAME'], 
+            'hostname: {}\n'.format(os.environ['SERVICE_NAME'],
                                     socket.gethostname(),
                                     socket.gethostbyname(socket.gethostname())))
 
@@ -231,7 +236,7 @@ def trace(service_number):
                 headers[header] = request.headers[header]
         ret = requests.get("http://localhost:9000/trace/2", headers=headers)
     return ('Hello from behind Envoy (service {})! hostname: {} resolved'
-            'hostname: {}\n'.format(os.environ['SERVICE_NAME'], 
+            'hostname: {}\n'.format(os.environ['SERVICE_NAME'],
                                     socket.gethostname(),
                                     socket.gethostbyname(socket.gethostname())))
 

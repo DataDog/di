@@ -119,7 +119,7 @@ def start(check_name, flavor, instance_name, options, direct, location, force, a
             echo_failure('No `setup.py` detected.')
             sys.exit(1)
 
-        conf_path = find_matching_file(os.path.join(check_dir, 'conf.yaml*'))
+        conf_path = find_matching_file(os.path.join(check_dir, 'datadog_checks', check_name, 'data', 'conf.yaml*'))
         if not conf_path:
             echo_failure('No `conf.yaml*` detected.')
             sys.exit(1)
